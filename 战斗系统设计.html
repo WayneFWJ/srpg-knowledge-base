@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>战斗系统设计 | 小岛秀夫知识库</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --bg-hover: #252535;
+            --accent-red: #ff4757;
+            --accent-orange: #ff6b35;
+            --accent-pink: #ff6b9d;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* 顶部导航栏 */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .nav-brand {
+            font-weight: 600;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-orange);
+        }
+
+        /* 主体布局 */
+        .main-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 60px;
+        }
+
+        /* 侧边目录 */
+        .sidebar {
+            width: 280px;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            bottom: 0;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin: 4px 0;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border-left: 2px solid transparent;
+        }
+
+        .toc-link:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .toc-link.active {
+            background: linear-gradient(90deg, rgba(255, 107, 53, 0.1), transparent);
+            color: var(--accent-orange);
+            border-left-color: var(--accent-orange);
+        }
+
+        .toc-h1 { font-weight: 600; }
+        .toc-h2 { padding-left: 20px; font-size: 0.85rem; }
+        .toc-h3 { padding-left: 36px; font-size: 0.8rem; opacity: 0.8; }
+
+        /* 内容区域 */
+        .content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px 48px;
+            max-width: 900px;
+        }
+
+        /* 文章头部 */
+        .article-header {
+            margin-bottom: 48px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .article-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* 标题样式 */
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 48px 0 24px;
+            color: var(--text-primary);
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--accent-orange);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 40px 0 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--accent-orange), var(--accent-red));
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 32px 0 16px;
+            color: var(--accent-cyan);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 24px 0 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 段落和文本 */
+        p {
+            margin: 16px 0;
+            color: var(--text-secondary);
+        }
+
+        strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* 引用块 */
+        blockquote {
+            margin: 24px 0;
+            padding: 20px 24px;
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-orange);
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        blockquote p {
+            margin: 0;
+        }
+
+        blockquote p + p {
+            margin-top: 12px;
+        }
+
+        /* 列表样式 */
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin: 8px 0;
+            color: var(--text-secondary);
+        }
+
+        li::marker {
+            color: var(--accent-orange);
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--bg-hover);
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* 代码块 */
+        pre {
+            background: #1e1e2e;
+            border-radius: 12px;
+            padding: 24px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            color: #cdd6f4;
+            background: none;
+            padding: 0;
+        }
+
+        :not(pre) > code {
+            background: var(--bg-hover);
+            color: var(--accent-pink);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.85em;
+        }
+
+        /* 分隔线 */
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 48px 0;
+        }
+
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background: var(--accent-orange);
+            color: white;
+            transform: translateY(-4px);
+        }
+
+        /* 高亮标记 */
+        .highlight {
+            background: linear-gradient(180deg, transparent 60%, rgba(255, 107, 53, 0.3) 60%);
+            padding: 0 4px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .sidebar {
+                display: none;
+            }
+            .content {
+                margin-left: 0;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 24px;
+            }
+            .article-title {
+                font-size: 1.8rem;
+            }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.2rem; }
+            .nav-links {
+                gap: 12px;
+            }
+            .nav-link span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <nav class="top-nav">
+        <div class="nav-brand">⚔️ 小岛秀夫知识库</div>
+        <div class="nav-links">
+            <a href="./index.html" class="nav-link">
+                <span>🏠</span>
+                <span>知识库首页</span>
+            </a>
+            <a href="https://waynefwj.github.io/kimi-claw-status/" class="nav-link" target="_blank">
+                <span>📊</span>
+                <span>返回监控页面</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- 侧边目录 -->
+        <aside class="sidebar">
+            <div class="sidebar-title">📑 目录</div>
+            <ul class="toc-list">
+                <li class="toc-item"><a href="#一战斗系统架构" class="toc-link toc-h1">一、战斗系统架构</a></li>
+                <li class="toc-item"><a href="#二职业体系设计" class="toc-link toc-h1">二、职业体系设计</a></li>
+                <li class="toc-item"><a href="#三技能系统设计" class="toc-link toc-h1">三、技能系统设计</a></li>
+                <li class="toc-item"><a href="#四克制与平衡系统" class="toc-link toc-h1">四、克制与平衡系统</a></li>
+                <li class="toc-item"><a href="#五pve与pvp差异化设计" class="toc-link toc-h1">五、PVE与PVP差异化</a></li>
+                <li class="toc-item"><a href="#六机制统计与设计建议" class="toc-link toc-h1">六、机制统计与建议</a></li>
+                <li class="toc-item"><a href="#七设计原则总结" class="toc-link toc-h1">七、设计原则总结</a></li>
+            </ul>
+        </aside>
+
+        <!-- 内容区域 -->
+        <main class="content">
+            <header class="article-header">
+                <h1 class="article-title">⚔️ 战斗系统设计</h1>
+                <p class="article-meta">SRPG 战斗系统深度设计指南 | 职业/兵种/技能体系构建方法论</p>
+            </header>
+
+            <blockquote>
+                <p>SRPG 战斗系统深度设计指南</p>
+                <p>职业/兵种/技能体系构建方法论</p>
+            </blockquote>
+
+            <h1 id="一战斗系统架构">一、战斗系统架构</h1>
+
+            <h2 id="11-系统层级">1.1 系统层级</h2>
+
+            <pre><code>战斗系统架构：
+
+┌─────────────────────────────────────────┐
+│           战斗表现层 (Presentation)        │
+│  ├─ 角色动画                               │
+│  ├─ 特效表现                               │
+│  ├─ UI反馈                                 │
+│  └─ 镜头语言                               │
+├─────────────────────────────────────────┤
+│           战斗逻辑层 (Logic)               │
+│  ├─ 回合管理                               │
+│  ├─ 行动计算                               │
+│  ├─ 伤害判定                               │
+│  └─ 状态管理                               │
+├─────────────────────────────────────────┤
+│           规则系统层 (Rules)               │
+│  ├─ 职业/兵种规则                          │
+│  ├─ 技能规则                               │
+│  ├─ 克制规则                               │
+│  └─ 特殊机制                               │
+├─────────────────────────────────────────┤
+│           数据层 (Data)                    │
+│  ├─ 角色属性                               │
+│  ├─ 装备数据                               │
+│  ├─ 技能数据                               │
+│  └─ 关卡数据                               │
+└─────────────────────────────────────────┘</code></pre>
+
+            <h2 id="12-战斗流程设计">1.2 战斗流程设计</h2>
+
+            <pre><code>标准战斗流程：
+
+战前准备阶段
+    │
+    ├─ 阵容配置
+    ├─ 技能配置
+    ├─ 装备检查
+    └─ 情报确认
+    ↓
+战斗开始
+    │
+    ├─ 初始化战场
+    ├─ 部署单位
+    └─ 开场演出/对话
+    ↓
+回合循环
+    │
+    ├─ 玩家阶段
+    │   ├─ 选择单位
+    │   ├─ 移动
+    │   ├─ 行动
+    │   └─ 待机
+    │
+    ├─ 敌方阶段
+    │   └─ AI执行
+    │
+    └─ 检查胜负条件
+    ↓
+战斗结束
+    │
+    ├─ 胜利/失败判定
+    ├─ 结算奖励
+    └─ 战后对话</code></pre>
+
+            <h1 id="二职业体系设计">二、职业体系设计</h1>
+
+            <h2 id="21-职业设计原则">2.1 职业设计原则</h2>
+
+            <p><strong>核心原则</strong>：</p>
+            <pre><code>1. 定位清晰：每个职业有明确的核心职责
+2. 互补关系：职业间形成相互配合
+3. 克制链条：存在明确的克制关系
+4. 差异化：相同定位的职业有独特机制
+5. 成长空间：职业有进阶/分支可能</code></pre>
+
+            <h2 id="22-六职业标准模型天地劫体系">2.2 六职业标准模型（天地劫体系）</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>职业</th>
+                        <th>定位</th>
+                        <th>核心机制</th>
+                        <th>代表角色</th>
+                        <th>克制关系</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>侠客</strong></td>
+                        <td>近战输出</td>
+                        <td>高暴击、反击、再动</td>
+                        <td>冰璃、殷剑平</td>
+                        <td>被御风克制</td>
+                    </tr>
+                    <tr>
+                        <td><strong>铁卫</strong></td>
+                        <td>坦克</td>
+                        <td>护卫、减伤、嘲讽</td>
+                        <td>古伦德、解臾</td>
+                        <td>克制御风</td>
+                    </tr>
+                    <tr>
+                        <td><strong>咒师</strong></td>
+                        <td>法术输出</td>
+                        <td>AOE、控制、元素伤害</td>
+                        <td>封寒月、慕容璇玑</td>
+                        <td>无</td>
+                    </tr>
+                    <tr>
+                        <td><strong>祝由</strong></td>
+                        <td>治疗辅助</td>
+                        <td>回血、驱散、增益</td>
+                        <td>封铃笙、葛云衣</td>
+                        <td>无</td>
+                    </tr>
+                    <tr>
+                        <td><strong>羽士</strong></td>
+                        <td>远程物理</td>
+                        <td>远程单点、对飞行特攻</td>
+                        <td>李盈凤、韩千秀</td>
+                        <td>克制御风</td>
+                    </tr>
+                    <tr>
+                        <td><strong>御风</strong></td>
+                        <td>刺客</td>
+                        <td>高机动、闪避、收割</td>
+                        <td>燕明蓉、曹沁</td>
+                        <td>切后排</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>职业特性权重</strong>：</p>
+            <pre><code>        输出  生存  控制  机动  辅助
+侠客    ★★★★  ★★★  ★★   ★★★  ★
+铁卫    ★★   ★★★★★ ★★★  ★★   ★★
+咒师    ★★★★★ ★★   ★★★  ★★   ★
+祝由    ★     ★★   ★     ★★   ★★★★★
+羽士    ★★★★  ★★   ★     ★★★  ★
+御风    ★★★★  ★★   ★★   ★★★★★ ★</code></pre>
+
+            <h2 id="23-五职业模型铃兰之剑体系">2.3 五职业模型（铃兰之剑体系）</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>职业</th>
+                        <th>颜色</th>
+                        <th>定位</th>
+                        <th>克制关系</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>粉碎者</strong></td>
+                        <td>红</td>
+                        <td>近战输出</td>
+                        <td>克守护者，被突袭者克</td>
+                    </tr>
+                    <tr>
+                        <td><strong>守护者</strong></td>
+                        <td>绿</td>
+                        <td>坦克/护卫</td>
+                        <td>克突袭者，被粉碎者克</td>
+                    </tr>
+                    <tr>
+                        <td><strong>突袭者</strong></td>
+                        <td>蓝</td>
+                        <td>刺客/机动</td>
+                        <td>克粉碎者，被守护者克</td>
+                    </tr>
+                    <tr>
+                        <td><strong>毁灭者</strong></td>
+                        <td>黄</td>
+                        <td>远程/魔法</td>
+                        <td>与守望者互克</td>
+                    </tr>
+                    <tr>
+                        <td><strong>守望者</strong></td>
+                        <td>紫</td>
+                        <td>治疗/辅助</td>
+                        <td>与毁灭者互克</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>双重克制系统</strong>：</p>
+            <pre><code>第一重：职业克制
+粉碎者 → 守护者 → 突袭者 → 粉碎者
+毁灭者 ↔ 守望者
+效果：130%伤害
+
+第二重：属性类型
+力量 → 技巧 → 智慧 → 力量
+效果：150%伤害 / 50%被克伤害
+
+策略意义：编队需同时考虑两种克制</code></pre>
+
+            <h2 id="24-兵种体系梦幻模拟战">2.4 兵种体系（梦幻模拟战）</h2>
+
+            <p><strong>兵种克制循环</strong>：</p>
+            <pre><code>       步兵
+      ↗   ↘
+  骑兵 ←──── 枪兵
+
+克制效果：攻击+20%，防御+20%
+
+兵种特性：
+├─ 步兵：攻高防中等，移动力3
+├─ 骑兵：移动力高(5)，可突进
+├─ 枪兵：防御高，反骑兵
+└─ 飞兵：无视地形，克制步兵
+
+高阶兵种：
+├─ 刺客：暴击高，克制法师
+├─ 僧侣：治疗/辅助
+├─ 弓兵：远程，克制飞兵
+└─ 魔物：特殊属性</code></pre>
+
+            <p><strong>佣兵系统</strong>：</p>
+            <pre><code>战斗单位构成：
+英雄 (主将)
+├─ 独立属性/技能
+├─ 可携带佣兵
+└─ 指挥范围 (属性加成圈)
+
+佣兵 (士兵)
+├─ 独立HP/攻防
+├─ 兵种类型
+├─ 数量随英雄等级增加
+└─ 在指挥范围内获得加成
+
+战斗表现：
+- 英雄+佣兵作为一个整体单位行动
+- 战斗中士兵先承受伤害
+- 士兵全灭后英雄才开始掉血
+- 英雄阵亡则整个单位退场</code></pre>
+
+            <h1 id="三技能系统设计">三、技能系统设计</h1>
+
+            <h2 id="31-技能类型体系">3.1 技能类型体系</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>类型</th>
+                        <th>说明</th>
+                        <th>消耗</th>
+                        <th>典型例子</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>普攻</strong></td>
+                        <td>基础攻击</td>
+                        <td>无</td>
+                        <td>普通攻击</td>
+                    </tr>
+                    <tr>
+                        <td><strong>主动技能</strong></td>
+                        <td>消耗资源主动释放</td>
+                        <td>MP/CD</td>
+                        <td>火球术、治疗术</td>
+                    </tr>
+                    <tr>
+                        <td><strong>被动技能</strong></td>
+                        <td>满足条件自动触发</td>
+                        <td>无</td>
+                        <td>暴击率提升、反击</td>
+                    </tr>
+                    <tr>
+                        <td><strong>天赋</strong></td>
+                        <td>角色固有特性</td>
+                        <td>无</td>
+                        <td>冰璃再动、夏侯仪吸血</td>
+                    </tr>
+                    <tr>
+                        <td><strong>气力技</strong></td>
+                        <td>需积累气力才能释放</td>
+                        <td>气力</td>
+                        <td>终极技能</td>
+                    </tr>
+                    <tr>
+                        <td><strong>战术技能</strong></td>
+                        <td>独立于角色的战场技能</td>
+                        <td>战术点</td>
+                        <td>弱点解析</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="32-技能机制库">3.2 技能机制库</h2>
+
+            <p><strong>核心机制分类</strong>：</p>
+            <pre><code>1. 伤害类机制
+├─ 直接伤害：物理/法术/真实伤害
+├─ 持续伤害：燃烧/中毒/流血
+├─ 溅射伤害：范围/连锁/弹射
+└─ 斩杀伤害：对残血额外伤害
+
+2. 治疗类机制
+├─ 直接治疗：立即恢复
+├─ 持续治疗：Hot效果
+├─ 吸血：造成伤害恢复
+└─ 复活：阵亡单位复活
+
+3. 控制类机制
+├─ 行动限制：眩晕/睡眠/冰冻
+├─ 技能限制：沉默/计穷
+├─ 移动限制：定身/减速/嘲讽
+└─ 状态反转：混乱/恐惧
+
+4. 增益类机制
+├─ 属性提升：攻击/防御/速度
+├─ 状态免疫：免控/免伤
+├─ 特殊状态：护盾/反击/吸血
+└─ 行动增益：再动/再移动
+
+5. 减益类机制
+├─ 属性降低：减攻/减防
+├─ 有害状态：中毒/燃烧
+├─ 标记状态：易伤/集火标记
+└─ 特殊减益：禁止治疗/禁止复活
+
+6. 位移类机制
+├─ 自身位移：瞬移/冲锋/传送
+├─ 敌人位移：击退/拉取/换位
+└─ 群体位移：聚怪/散开
+
+7. 地形类机制
+├─ 地形创造：制造特殊地格
+├─ 地形利用：地形伤害加成
+└─ 地形转化：改变地形类型
+
+8. 特殊机制
+├─ 召唤：召唤物协助战斗
+├─ 变身：形态切换
+├─ 复制：复制技能/属性
+└─ 链接：伤害分担/增益共享</code></pre>
+
+            <h2 id="33-技能设计案例">3.3 技能设计案例</h2>
+
+            <p><strong>冰璃（完美人权卡设计）</strong>：</p>
+            <pre><code>天赋【剑使威仪】：
+├─ 效果：伤害提升10%，主动攻击后获得【再行动】
+├─ 分析：每回合两次行动 = 双倍输出
+└─ 定位：PVE开荒神技，PVP需优先处理
+
+技能组合策略：
+PVE通用：
+├─ 【避实就虚】：减攻+输出
+├─ 【幽剑冥引】：单体高伤
+└─ 【定魂】：免死被动
+
+PVP爆发：
+├─ 【冰华飞刺】：穿刺+再移动
+├─ 【灭剑血胧】：群伤
+└─ 【定魂】：免死
+
+设计成功要素：
+1. 机制完整：输出+生存+机动
+2. 数值合理：强但不超模
+3. 不可替代：免死被动独一档
+4. 情怀加成：原作人气角色</code></pre>
+
+            <p><strong>霍雍（多属性复合设计）</strong>：</p>
+            <pre><code>天赋【幽氛化神】：
+机制：
+- 周围有冰/炎/暗角色时获得对应状态
+- 三种状态分别强化不同属性绝学
+├─ 【寒岚】：冰系技能+20%法穿
+├─ 【焚狱】：炎系技能后驱散目标增益
+└─ 【玄幽】：暗系技能后附加随机有害状态
+
+技能【罗睺真法】/【计都秘术】：
+设计：从三个技能中选择一个使用
+意义：
+- 一个角色 = 三个角色的功能性
+- 根据战局灵活切换
+- 高策略深度
+
+设计洞察：
+- 多属性角色在战棋中极其罕见
+- 需要极高的平衡把控
+- 策略上限极高，但操作难度也大</code></pre>
+
+            <h2 id="34-技能联动设计">3.4 技能联动设计</h2>
+
+            <p><strong>Combo设计模式</strong>：</p>
+            <pre><code>1. 状态施加 → 状态利用
+【离火神诀】(夏侯仪) → 【炎之力】(被动)
+- 施加燃烧 → 对燃烧目标伤害+20%
+
+2. 位移 → 地形利用
+【冰华飞刺】(冰璃) → 悬崖地形
+- 穿刺敌人 → 将敌人推下悬崖
+
+3. 控制链
+【眩晕】 → 【睡眠】 → 【冰冻】
+- 连续控制，延长控制时间
+
+4. 增益叠加
+【攻击提升】 + 【暴击提升】 + 【伤害加成】
+- 多增益叠加，爆发输出
+
+5. 技能循环
+普攻 → 技能A(减CD) → 技能B → 普攻
+- 形成技能循环，持续输出</code></pre>
+
+            <h2 id="35-数值边界">3.5 数值边界</h2>
+
+            <p><strong>伤害倍率分布</strong>：</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>技能类型</th>
+                        <th>倍率范围</th>
+                        <th>典型值</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>普攻</td>
+                        <td>1.0x</td>
+                        <td>1.0x</td>
+                    </tr>
+                    <tr>
+                        <td>单体技能</td>
+                        <td>1.3-1.8x</td>
+                        <td>1.5x</td>
+                    </tr>
+                    <tr>
+                        <td>单体爆发</td>
+                        <td>2.0-2.5x</td>
+                        <td>2.0x</td>
+                    </tr>
+                    <tr>
+                        <td>AOE技能</td>
+                        <td>0.6-1.2x</td>
+                        <td>0.8x</td>
+                    </tr>
+                    <tr>
+                        <td>气力技</td>
+                        <td>2.5-4.0x</td>
+                        <td>3.0x</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>冷却回合分布</strong>：</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>CD长度</th>
+                        <th>占比</th>
+                        <th>技能类型</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0回合</td>
+                        <td>25%</td>
+                        <td>被动/普攻</td>
+                    </tr>
+                    <tr>
+                        <td>1-2回合</td>
+                        <td>35%</td>
+                        <td>常规技能</td>
+                    </tr>
+                    <tr>
+                        <td>3-4回合</td>
+                        <td>28%</td>
+                        <td>强力技能</td>
+                    </tr>
+                    <tr>
+                        <td>5回合+</td>
+                        <td>12%</td>
+                        <td>终极技能</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h1 id="四克制与平衡系统">四、克制与平衡系统</h1>
+
+            <h2 id="41-克制系统设计">4.1 克制系统设计</h2>
+
+            <p><strong>属性克制（天地劫）</strong>：</p>
+            <pre><code>克制循环：
+火 → 雷 → 冰 → 火
+光 ↔ 暗（双向克制）
+
+克制效果：
+├─ 克制方：1.3倍伤害
+├─ 被克方：0.9倍伤害
+└─ 差值：44%伤害差距
+
+策略意义：
+1. 编队约束：必须考虑属性搭配，单色队风险极高
+2. 关卡设计：根据敌人属性选择出战角色
+3. 养成驱动：需要培养多属性角色应对不同副本
+
+光暗特殊性：
+光属性：只克制暗，不被任何属性克制（通用型）
+暗属性：被光克制，不克制任何属性（高风险高回报）</code></pre>
+
+            <p><strong>兵种克制（梦幻模拟战）</strong>：</p>
+            <pre><code>克制循环：
+步兵 → 骑兵 → 枪兵 → 步兵
+弓兵 → 飞兵
+僧侣 → 魔物
+刺客 → 法师
+
+克制效果：
+├─ 攻击+20%
+├─ 防御+20%
+└─ 综合优势：44%战斗力差距
+
+应用策略：
+1. 预测敌方兵种，选择克制佣兵
+2. 混合兵种应对不确定情况
+3. 利用兵种特性（骑兵突进、飞兵无视地形）</code></pre>
+
+            <p><strong>双重克制（铃兰之剑）</strong>：</p>
+            <pre><code>第一重：职业克制
+粉碎者 → 守护者 → 突袭者 → 粉碎者
+毁灭者 ↔ 守望者
+效果：130%伤害
+
+第二重：属性类型
+力量 → 技巧 → 智慧 → 力量
+效果：150%伤害 / 50%被克伤害
+
+策略深度：
+- 编队需要同时考虑两种克制
+- 单属性队伍风险极高
+- 混合编队策略空间大</code></pre>
+
+            <h2 id="42-平衡性设计">4.2 平衡性设计</h2>
+
+            <p><strong>数值平衡原则</strong>：</p>
+            <pre><code>1. 不同情况的最优解加权平均效用一致
+2. 克制关系明显但不可绝对
+3. 留有操作空间，不完全由数值决定
+4. 新内容加入时考虑环境冲击</code></pre>
+
+            <p><strong>反制设计</strong>：</p>
+            <pre><code>每个强力机制都应有反制手段：
+
+再动 → 控制限制
+├─ 眩晕阻止再动
+├─ 沉默阻止技能释放
+└─ 高爆发击杀
+
+控制 → 驱散/免控
+├─ 驱散技能
+├─ 免控被动
+└─ 控制抗性
+
+高输出 → 护卫/减伤
+├─ 护卫承伤
+├─ 护盾减伤
+└─ 高防御坦克
+
+高机动 → 预判/控制
+├─ 预判走位设伏
+├─ 范围控制技能
+└─ 限制移动地形</code></pre>
+
+            <h1 id="五pve与pvp差异化设计">五、PVE与PVP差异化设计</h1>
+
+            <h2 id="51-pve设计">5.1 PVE设计</h2>
+
+            <p><strong>关卡类型</strong>：</p>
+            <pre><code>主线关卡：
+├─ 剧情推进
+├─ 难度递增
+└─ 星级评价系统
+
+时空裂缝/挑战关卡：
+├─ 高难度挑战
+├─ 限定角色/装备掉落
+└─ 策略验证
+
+日常副本：
+├─ 经验本
+├─ 金币本
+├─ 装备本
+└─ 羁绊本
+
+特殊模式：
+├─ 无尽航路 (Roguelike)
+├─ 远古的呼唤 (BOSS战)
+└─ 世界BOSS</code></pre>
+
+            <p><strong>AI行为设计</strong>：</p>
+            <pre><code>PVE AI特点：
+├─ 优先攻击克制目标
+├─ 会集火低血量目标
+├─ 固定行为模式（可被利用）
+└─ 不会完美利用机制
+
+设计意图：
+- 给玩家预测和利用的空间
+- 避免AI过强导致挫败感
+- 保持挑战性但不过于困难</code></pre>
+
+            <h2 id="52-pvp设计">5.2 PVP设计</h2>
+
+            <p><strong>竞技场系统</strong>：</p>
+            <pre><code>自动竞技场：
+- 防守阵容预设
+- 进攻自动进行
+- 排名积分制
+
+手动竞技场：
+- 实时匹配
+- 手动操作
+- 段位系统
+
+平衡机制：
+- 属性有一定平衡
+- 但养成深度仍然影响
+- 策略克制关系重要</code></pre>
+
+            <p><strong>PVP专属设计</strong>：</p>
+            <pre><code>禁用/选用机制：
+├─ 轮流禁用对方核心
+├─ 选用counter角色
+└─ BP策略重要性
+
+PVP强势机制：
+├─ 再动角色价值极高
+├─ 控制技能优先级提升
+├─ 机动性决定战局
+└─ 驱散/免控必备
+
+PVP专属技能效果：
+├─ 【冰华之阵】：使护卫失效
+├─ 【绝魄之阵】：污秽克制铁卫
+└─ 【眩晕】：控制敌方核心</code></pre>
+
+            <h1 id="六机制统计与设计建议">六、机制统计与设计建议</h1>
+
+            <h2 id="61-机制覆盖率统计">6.1 机制覆盖率统计</h2>
+
+            <p>基于《天地劫》全量技能穷举（600+技能）：</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>机制类型</th>
+                        <th>覆盖率</th>
+                        <th>出现频率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>再动</strong></td>
+                        <td>65%</td>
+                        <td>极高</td>
+                    </tr>
+                    <tr>
+                        <td><strong>护卫/援护</strong></td>
+                        <td>58%</td>
+                        <td>高</td>
+                    </tr>
+                    <tr>
+                        <td><strong>驱散</strong></td>
+                        <td>42%</td>
+                        <td>中高</td>
+                    </tr>
+                    <tr>
+                        <td><strong>控制</strong></td>
+                        <td>38%</td>
+                        <td>中</td>
+                    </tr>
+                    <tr>
+                        <td><strong>吸血/恢复</strong></td>
+                        <td>35%</td>
+                        <td>中</td>
+                    </tr>
+                    <tr>
+                        <td><strong>再移动</strong></td>
+                        <td>28%</td>
+                        <td>中</td>
+                    </tr>
+                    <tr>
+                        <td><strong>地形改造</strong></td>
+                        <td>15%</td>
+                        <td>低</td>
+                    </tr>
+                    <tr>
+                        <td><strong>召唤物</strong></td>
+                        <td>12%</td>
+                        <td>低</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="62-高频机制组合">6.2 高频机制组合</h2>
+
+            <p><strong>标配组合（>30%出现率）</strong>：</p>
+            <pre><code>1. 再动+收割（刺客标配）
+2. 护卫+反击（坦克标配）
+3. AOE+控制（法师标配）
+4. 治疗+驱散（奶妈标配）</code></pre>
+
+            <p><strong>低频但强力组合（<10%出现率）</strong>：</p>
+            <pre><code>1. 再动+再移动（极高机动）
+2. 全屏+无视防御（终极收割）
+3. 召唤+强化（特殊流派）
+4. 地形创造+地形利用（策略深度）</code></pre>
+
+            <h2 id="63-差异化建议">6.3 差异化建议</h2>
+
+            <p><strong>必须包含的机制</strong>（品类标配）：</p>
+            <pre><code>✅ 再动/额外行动机制
+✅ 护卫/援护机制
+✅ 驱散/净化机制
+✅ 控制/反制机制
+✅ 气力/能量积累机制</code></pre>
+
+            <p><strong>差异化机会</strong>（低覆盖率）：</p>
+            <pre><code>🎯 地形深度联动（仅15%覆盖率）
+   - 地格创造→地格利用→地格转化链条
+   - 案例：《铃兰之剑》击退+地形杀
+
+🎯 召唤物体系（仅12%覆盖率）
+   - 召唤物属性/技能独立计算
+   - 召唤物与本体联动
+
+🎯 位置置换机制
+   - 敌我位置互换
+   - 强制位移控制
+
+🎯 预判/陷阱机制
+   - 延迟生效技能
+   - 区域控制预判</code></pre>
+
+            <h1 id="七设计原则总结">七、设计原则总结</h1>
+
+            <h2 id="71-技能设计原则">7.1 技能设计原则</h2>
+
+            <pre><code>1. 简单机制，复杂组合
+   - 单个技能效果直观
+   - 组合使用产生化学反应
+
+2. 代价与收益平衡
+   - 强力技能有CD/气力/代价
+   - 被动技能需要条件触发
+
+3. 差异化定位
+   - 避免角色同质化
+   - 每个角色有独特使用场景
+
+4. 成长感
+   - 技能升级有质变点
+   - 养成选择改变玩法</code></pre>
+
+            <h2 id="72-角色设计checklist">7.2 角色设计Checklist</h2>
+
+            <pre><code>□ 定位明确：该角色解决什么问题？
+□ 机制独特：是否有不可替代的机制？
+□ 组合空间：能与哪些角色/技能联动？
+□ 反制手段：是否存在有效的counter？
+□ 养成深度：五内/魂石选择是否有意义？
+□ 操作上限：高手与新手使用差距是否明显？</code></pre>
+
+            <hr>
+
+            <p><em>文档版本: v1.0 | 创建时间: 2026-03-13</em></p>
+        </main>
+    </div>
+
+    <!-- 回到顶部按钮 -->
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+
+    <script>
+        // 代码高亮
+        hljs.highlightAll();
+
+        // 回到顶部按钮显示/隐藏
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // 平滑滚动到顶部
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // 目录高亮当前章节
+        const sections = document.querySelectorAll('h1[id], h2[id]');
+        const tocLinks = document.querySelectorAll('.toc-link');
+
+        function highlightTOC() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                if (sectionTop <= 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', highlightTOC);
+        highlightTOC();
+    </script>
+</body>
+</html>
