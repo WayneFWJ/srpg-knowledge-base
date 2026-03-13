@@ -5,6 +5,12 @@
 
 ---
 
+## 🔗 相关链接
+
+← [返回监控页面](https://waynefwj.github.io/kimi-claw-status/) | [樱井正博游戏课堂](https://github.com/WayneFWJ/sakurai-classroom)
+
+---
+
 ## 📚 知识库目录
 
 | 文档 | 内容概述 |
