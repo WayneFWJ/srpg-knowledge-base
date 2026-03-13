@@ -7,7 +7,7 @@
 
 ## 🔗 相关链接
 
-← [返回监控页面](https://waynefwj.github.io/kimi-claw-status/) | [樱井正博游戏课堂](https://github.com/WayneFWJ/sakurai-classroom)
+← [返回监控页面](https://waynefwj.github.io/kimi-claw-status/) | [📱 网页版知识库](https://waynefwj.github.io/srpg-knowledge-base/) | [樱井正博游戏课堂](https://github.com/WayneFWJ/sakurai-classroom)
 
 ---
 
