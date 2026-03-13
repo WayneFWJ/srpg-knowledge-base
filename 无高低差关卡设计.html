@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无高低差关卡设计指南 - SRPG知识库</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-left: 4px solid #6366f1;
+        }
+        
+        .terrain-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        
+        .checklist-item {
+            transition: all 0.3s ease;
+        }
+        
+        .checklist-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th {
+            background: rgba(99, 102, 241, 0.3);
+            color: #e0e7ff;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 16px;
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #818cf8;
+            transform: translateX(5px);
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Fira Code', monospace;
+            overflow-x: auto;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .tip-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
+            border-left: 4px solid #10b981;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
+            border-left: 4px solid #ef4444;
+        }
+        
+        .mermaid {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .grid-pattern {
+            font-family: monospace;
+            line-height: 1.2;
+            white-space: pre;
+        }
+        
+        .toc-link {
+            display: block;
+            padding: 8px 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .toc-link:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #e0e7ff;
+        }
+        
+        .toc-link.active {
+            background: rgba(99, 102, 241, 0.3);
+            color: #818cf8;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            z-index: 1000;
+            transition: width 0.1s;
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- Header -->
+    <header class="glass-card sticky top-0 z-50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chess-board text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white">无高低差关卡设计指南</h1>
+                    <p class="text-sm text-gray-400">SRPG知识库 · 关卡设计专题</p>
+                </div>
+            </div>
+            <a href="index.html" class="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all">
+                <i class="fas fa-arrow-left"></i>
+                <span>返回知识库</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8 flex gap-8">
+        <!-- Sidebar TOC -->
+        <aside class="w-64 hidden lg:block flex-shrink-0">
+            <div class="glass-card rounded-xl p-4 sticky top-24">
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">目录导航</h3>
+                <nav class="space-y-1 text-sm">
+                    <a href="#overview" class="toc-link">概述</a>
+                    <a href="#why-flat" class="toc-link">1. 为什么无高低差？</a>
+                    <a href="#core-mechanics" class="toc-link">2. 替代高低差的核心机制</a>
+                    <a href="#framework" class="toc-link">3. 日式战棋关卡设计框架</a>
+                    <a href="#patterns" class="toc-link">4. 实用设计模式</a>
+                    <a href="#cases" class="toc-link">5. 案例分析</a>
+                    <a href="#checklist" class="toc-link">6. 设计Checklist</a>
+                    <a href="#reference" class="toc-link">7. 快速参考表</a>
+                    <a href="#conclusion" class="toc-link">8. 结语</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 min-w-0">
+            <!-- Overview Section -->
+            <section id="overview" class="mb-12">
+                <div class="glass-card rounded-2xl p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-mountain text-white text-xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-white">概述</h2>
+                    </div>
+                    
+                    <p class="text-lg text-gray-300 leading-relaxed mb-6">
+                        本指南专注于日式SRPG（战棋游戏）中<strong class="text-indigo-400">无高低差地形系统</strong>的关卡设计方案。通过深入分析火焰纹章GBA、天地劫等经典作品，提炼出一套完整的替代方案设计框架。
+                    </p>
+                    
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="terrain-card rounded-xl p-4">
+                            <i class="fas fa-tree text-green-400 text-2xl mb-2"></i>
+                            <h4 class="font-semibold text-white">地形效果系统</h4>
+                            <p class="text-sm text-gray-400">用地形加成替代高度差优势</p>
+                        </div>
+                        <div class="terrain-card rounded-xl p-4">
+                            <i class="fas fa-archway text-amber-400 text-2xl mb-2"></i>
+                            <h4 class="font-semibold text-white">阻塞点设计</h4>
+                            <p class="text-sm text-gray-400">用障碍物创造战略要点</p>
+                        </div>
+                        <div class="terrain-card rounded-xl p-4">
+                            <i class="fas fa-cogs text-blue-400 text-2xl mb-2"></i>
+                            <h4 class="font-semibold text-white">第三方机制</h4>
+                            <p class="text-sm text-gray-400">机关、增援、互动元素</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 1: Why Flat -->
+            <section id="why-flat" class="mb-12">
+                <div class="section-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-sm">1</span>
+                        为什么无高低差？设计取舍分析
+                    </h2>
+                    
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">1.1 高低差系统的优缺点</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="glass-card rounded-xl p-6 border-l-4 border-green-500">
+                            <h4 class="font-semibold text-green-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-check-circle"></i> 高低差优势
+                            </h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-start gap-2"><i class="fas fa-caret-right text-green-500 mt-1"></i>直观的空间策略感</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-caret-right text-green-500 mt-1"></i>天然的高低位置控制权</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-caret-right text-green-500 mt-1"></i>远程单位的战术价值提升</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-caret-right text-green-500 mt-1"></i>符合人类对地形的直觉认知</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6 border-l-4 border-red-500">
+                            <h4 class="font-semibold text-red-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-times-circle"></i> 高低差劣势
+                            </h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li class="flex items-start gap-2"><i class="fas fa-caret-right text-red-500 mt-1"></i>实现复杂度较高</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-caret-right text-red-500 mt-1"></i>AI寻路计算量增加</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-caret-right text-red-500 mt-1"></i>地图设计约束更多</li>
+                                <li class="flex items-start gap-2"><i class="fas fa-caret-right text-red-500 mt-1"></i>对移动端性能要求更高</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">1.2 无高低差的设计价值</h3>
+                    
+                    <div class="table-container mb-6">
+                        <table class="text-sm">
+                            <thead>
+                                <tr>
+                                    <th>场景</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-indigo-300 font-medium">移动端优先</td>
+                                    <td>简化计算，提升性能</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-indigo-300 font-medium">快节奏战斗</td>
+                                    <td>减少地形计算，聚焦单位对抗</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-indigo-300 font-medium">2D像素风格</td>
+                                    <td>高低差视觉表现受限</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-indigo-300 font-medium">强调兵种克制</td>
+                                    <td>让克制关系成为核心</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-indigo-300 font-medium">简化学习成本</td>
+                                    <td>降低新手入门门槛</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="highlight-box rounded-xl p-6">
+                        <h4 class="font-semibold text-amber-400 mb-2 flex items-center gap-2">
+                            <i class="fas fa-lightbulb"></i> 核心问题
+                        </h4>
+                        <p class="text-lg text-gray-200">
+                            <strong>关键问题</strong>：没有高低差，如何创造空间策略深度？
+                        </p>
+                        <p class="text-gray-300 mt-2">
+                            答案：<strong>用地形效果系统替代高度差，用障碍物创造阻塞点，用机制丰富战术选择。</strong>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Core Mechanics -->
+            <section id="core-mechanics" class="mb-12">
+                <div class="section-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-sm">2</span>
+                        替代高低差的核心机制
+                    </h2>
+                    
+                    <!-- 2.1 Terrain System -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">2.1 地形效果系统（核心替代方案）</h3>
+                    
+                    <p class="text-gray-300 mb-6">
+                        地形效果是无高低差系统最核心的替代机制。通过给不同地形赋予独特的效果，创造战术价值差异。
+                    </p>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="glass-card rounded-xl p-5">
+                            <h4 class="font-semibold text-green-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-shield-alt"></i> 防御地形
+                            </h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">森林</strong>
+                                    <div class="text-gray-400 mt-1">回避+20%，移动力+1</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">城墙/堡垒</strong>
+                                    <div class="text-gray-400 mt-1">防御+30%，移动力+2</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">建筑内部</strong>
+                                    <div class="text-gray-400 mt-1">防御+15%，回避+10%，射程-1</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h4 class="font-semibold text-blue-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-water"></i> 移动障碍
+                            </h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">河流</strong>
+                                    <div class="text-gray-400 mt-1">移动力+3，仅游泳/飞行可停留</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">沙漠</strong>
+                                    <div class="text-gray-400 mt-1">移动力+2，隐藏路径/宝藏</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">雪地/沼泽</strong>
+                                    <div class="text-gray-400 mt-1">移动力+1~2，可能附加减速</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h4 class="font-semibold text-red-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-skull-crossbones"></i> 危险地形
+                            </h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">毒沼</strong>
+                                    <div class="text-gray-400 mt-1">每回合损失10%HP</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">岩浆/火焰</strong>
+                                    <div class="text-gray-400 mt-1">进入时损失20%HP，不可停留</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">雷云</strong>
+                                    <div class="text-gray-400 mt-1">20%概率被雷击中</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h4 class="font-semibold text-purple-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-magic"></i> 效果地形
+                            </h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">治疗之泉</strong>
+                                    <div class="text-gray-400 mt-1">每回合回复15%HP</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">增益石碑</strong>
+                                    <div class="text-gray-400 mt-1">攻击力+20%，持续2回合</div>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">传送阵</strong>
+                                    <div class="text-gray-400 mt-1">可传送至指定位置</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="text-lg font-semibold text-white mb-4">火焰纹章GBA地形效果表</h4>
+                    
+                    <div class="table-container mb-8">
+                        <table class="text-sm">
+                            <thead>
+                                <tr>
+                                    <th>地形</th>
+                                    <th>回避加成</th>
+                                    <th>防御加成</th>
+                                    <th>移动力消耗</th>
+                                    <th>特殊效果</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="text-gray-400">平原</td><td>0%</td><td>0</td><td>1</td><td>无</td></tr>
+                                <tr><td class="text-green-400">森林</td><td class="text-green-400">+20%</td><td class="text-green-400">+1</td><td>2</td><td>-</td></tr>
+                                <tr><td class="text-green-400">深山</td><td class="text-green-400">+30%</td><td class="text-green-400">+2</td><td>3</td><td>-</td></tr>
+                                <tr><td class="text-amber-400">堡垒</td><td class="text-green-400">+20%</td><td class="text-green-400">+2</td><td>2</td><td class="text-cyan-400">每回合回复HP</td></tr>
+                                <tr><td class="text-gray-400">城墙</td><td>0%</td><td class="text-green-400">+3</td><td>-</td><td class="text-red-400">不可穿越</td></tr>
+                                <tr><td class="text-blue-400">河流</td><td>0%</td><td>0</td><td>3</td><td class="text-purple-400">仅飞行可停留</td></tr>
+                                <tr><td class="text-green-400">山地</td><td class="text-green-400">+30%</td><td class="text-green-400">+1</td><td>-</td><td class="text-purple-400">仅步行可进入</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box rounded-xl p-6 mb-8">
+                        <h4 class="font-semibold text-emerald-400 mb-2 flex items-center gap-2">
+                            <i class="fas fa-star"></i> 设计洞察
+                        </h4>
+                        <ul class="space-y-1 text-gray-300">
+                            <li><strong>森林</strong>是最核心的战术地形，提供回避加成但消耗移动力</li>
+                            <li><strong>堡垒</strong>是战略要点，提供防御+回复双重价值</li>
+                            <li><strong>河流/城墙</strong>创造天然阻塞点，形成战场分割</li>
+                            <li><strong>移动力消耗</strong>本身就是重要的策略要素</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 2.2 Obstacles -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">2.2 障碍物与通道设计</h3>
+                    
+                    <h4 class="text-lg font-semibold text-white mb-4">阻塞点类型</h4>
+                    
+                    <div class="grid md:grid-cols-3 gap-4 mb-8">
+                        <div class="glass-card rounded-xl p-5">
+                            <h5 class="font-semibold text-amber-400 mb-3">类型A：狭窄通道</h5>
+                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">███████
+█  →  █
+███████
+   ↑狭窄通道</div>
+                            <p class="text-sm text-gray-400">适用：控制敌人数量的遭遇战</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h5 class="font-semibold text-amber-400 mb-3">类型B：城门/关卡</h5>
+                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">███████████████
+█  门  █  门  █
+███████████████
+   ↑可开关的门</div>
+                            <p class="text-sm text-gray-400">适用：攻城战、防守战</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h5 class="font-semibold text-amber-400 mb-3">类型C：桥梁</h5>
+                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">~~~~~~~~████~~~~~~~~
+~~~~~~~~█→→█~~~~~~~~
+~~~~~~~~████~~~~~~~~
+↑河流中唯一通道</div>
+                            <p class="text-sm text-gray-400">适用：创造必经的交战点</p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="text-lg font-semibold text-white mb-4">可破坏障碍物</h4>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                            <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-bomb text-red-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-white">炸药桶</h5>
+                                <p class="text-gray-400 text-sm mt-1">被攻击后爆炸，对周围3×3范围造成伤害。可主动引爆用于清场或制造缺口。敌方AI会试图远离，可被用于驱赶。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                            <div class="w-12 h-12 bg-stone-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-hill-rock text-stone-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-white">滚石/落石</h5>
+                                <p class="text-gray-400 text-sm mt-1">触发后沿指定方向滚动，对路径上单位造成伤害并击退。可以破坏特定墙壁创造新路径。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                            <div class="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-wall-brick text-amber-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-white">可破坏墙壁</h5>
+                                <p class="text-gray-400 text-sm mt-1">耐久度系统，需要多次攻击。创造捷径或打破阻塞点，提供多路线通关可能。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 2.3 Third-party -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">2.3 第三方机制</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="glass-card rounded-xl p-5">
+                            <h4 class="font-semibold text-purple-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-door-open"></i> 机关门与开关
+                            </h4>
+                            <div class="space-y-3 text-sm">
+                                <div>
+                                    <strong class="text-white">触发方式</strong>
+                                    <ul class="text-gray-400 mt-1 space-y-1 ml-4">
+                                        <li>• 开关：单位站在指定格子触发</li>
+                                        <li>• 压力板：任意单位经过时触发</li>
+                                        <li>• 远程触发：弓箭/法术可触发</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <strong class="text-white">门类型</strong>
+                                    <ul class="text-gray-400 mt-1 space-y-1 ml-4">
+                                        <li>• 单向门：只能从一侧打开</li>
+                                        <li>• 限时门：开启后N回合关闭</li>
+                                        <li>• 连锁门：多开关控制多扇门</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h4 class="font-semibold text-orange-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-users"></i> 增援点
+                            </h4>
+                            <div class="space-y-3 text-sm">
+                                <div>
+                                    <strong class="text-white">触发条件</strong>
+                                    <ul class="text-gray-400 mt-1 space-y-1 ml-4">
+                                        <li>• 回合触发：第X回合开始出现</li>
+                                        <li>• 事件触发：特定条件满足后</li>
+                                        <li>• 区域触发：玩家进入某区域后</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <strong class="text-white">设计用途</strong>
+                                    <ul class="text-gray-400 mt-1 space-y-1 ml-4">
+                                        <li>• 制造时间压力</li>
+                                        <li>• 防止龟缩战术</li>
+                                        <li>• 创造多线作战</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 2.4 Vision -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">2.4 视野与战争迷雾</h3>
+                    
+                    <div class="glass-card rounded-xl p-6 mb-6">
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div>
+                                <h5 class="font-semibold text-cyan-400 mb-2">基础视野</h5>
+                                <ul class="text-sm text-gray-400 space-y-1">
+                                    <li>标准视野：5格</li>
+                                    <li>远程单位：7格</li>
+                                    <li>夜间/洞穴：3格</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-cyan-400 mb-2">视野阻挡</h5>
+                                <ul class="text-sm text-gray-400 space-y-1">
+                                    <li>森林：阻挡穿越视野</li>
+                                    <li>建筑/墙壁：完全阻挡</li>
+                                    <li>高地：视野+2（如有）</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-cyan-400 mb-2">视野优势</h5>
+                                <ul class="text-sm text-gray-400 space-y-1">
+                                    <li>先手优势：提前准备</li>
+                                    <li>射程优势：白嫖机会</li>
+                                    <li>伏击可能：隐藏埋伏</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Framework -->
+            <section id="framework" class="mb-12">
+                <div class="section-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-sm">3</span>
+                        日式战棋关卡设计框架
+                    </h2>
+                    
+                    <!-- 3.1 3D Model -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">3.1 三维设计模型</h3>
+                    
+                    <div class="glass-card rounded-xl p-6 mb-8">
+                        <div class="text-center mb-6">
+                            <div class="inline-block">
+                                <div class="text-indigo-400 font-semibold mb-2">敌人强度</div>
+                                <div class="text-4xl text-gray-600">│</div>
+                                <div class="flex items-center gap-4">
+                                    <div class="text-gray-500">环境大小</div>
+                                    <div class="w-32 h-32 border-2 border-indigo-500/30 rounded-lg flex items-center justify-center relative">
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="text-center text-xs text-gray-500">
+                                                <div>敌人机制</div>
+                                                <div class="text-indigo-400 font-semibold">地形机制</div>
+                                                <div>第三方机制</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-gray-500">额外机制</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="text-sm">
+                                <thead>
+                                    <tr>
+                                        <th>维度偏向</th>
+                                        <th>体验特征</th>
+                                        <th>代表关卡</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-red-400 font-medium">敌人强度</td>
+                                        <td>数值验证，考验练度</td>
+                                        <td>BOSSrush关卡</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-green-400 font-medium">环境大小</td>
+                                        <td>空间调度，考验移动</td>
+                                        <td>大型战场</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-purple-400 font-medium">额外机制</td>
+                                        <td>策略验证，考验理解</td>
+                                        <td>机关解谜关</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- 3.2 Emotional Curve -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">3.2 情感曲线设计</h3>
+                    
+                    <div class="glass-card rounded-xl p-6 mb-8">
+                        <div class="relative h-64 mb-6">
+                            <svg viewBox="0 0 600 200" class="w-full h-full">
+                                <!-- Grid lines -->
+                                <line x1="50" y1="180" x2="550" y2="180" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                                <line x1="50" y1="140" x2="550" y2="140" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                                <line x1="50" y1="100" x2="550" y2="100" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                                <line x1="50" y1="60" x2="550" y2="60" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                                <line x1="50" y1="20" x2="550" y2="20" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                                
+                                <!-- Y Axis labels -->
+                                <text x="30" y="185" fill="#6b7280" font-size="10">0%</text>
+                                <text x="25" y="105" fill="#6b7280" font-size="10">50%</text>
+                                <text x="20" y="25" fill="#6b7280" font-size="10">100%</text>
+                                <text x="10" y="100" fill="#9ca3af" font-size="12" transform="rotate(-90 10 100)">紧张度</text>
+                                
+                                <!-- Curve -->
+                                <path d="M 50 160 L 150 120 L 250 50 L 350 30 L 450 40 L 550 160" 
+                                      fill="none" stroke="url(#gradient)" stroke-width="3"/>
+                                
+                                <!-- Points -->
+                                <circle cx="50" cy="160" r="5" fill="#6366f1"/>
+                                <circle cx="150" cy="120" r="5" fill="#818cf8"/>
+                                <circle cx="250" cy="50" r="5" fill="#a855f7"/>
+                                <circle cx="350" cy="30" r="5" fill="#c084fc"/>
+                                <circle cx="450" cy="40" r="5" fill="#a855f7"/>
+                                <circle cx="550" cy="160" r="5" fill="#6366f1"/>
+                                
+                                <!-- X Axis labels -->
+                                <text x="50" y="195" fill="#9ca3af" font-size="10" text-anchor="middle">开局</text>
+                                <text x="150" y="195" fill="#9ca3af" font-size="10" text-anchor="middle">展开</text>
+                                <text x="250" y="195" fill="#9ca3af" font-size="10" text-anchor="middle">高潮</text>
+                                <text x="350" y="195" fill="#9ca3af" font-size="10" text-anchor="middle">决胜</text>
+                                <text x="450" y="195" fill="#9ca3af" font-size="10" text-anchor="middle">结束</text>
+                                
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#6366f1"/>
+                                        <stop offset="50%" style="stop-color:#a855f7"/>
+                                        <stop offset="100%" style="stop-color:#6366f1"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-5 gap-4 text-sm">
+                            <div class="bg-white/5 rounded-lg p-3 text-center">
+                                <div class="text-indigo-400 font-semibold">开局</div>
+                                <div class="text-gray-500">20%</div>
+                                <div class="text-gray-400 text-xs mt-1">占位布局</div>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3 text-center">
+                                <div class="text-indigo-400 font-semibold">展开</div>
+                                <div class="text-gray-500">45%</div>
+                                <div class="text-gray-400 text-xs mt-1">试探交火</div>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3 text-center">
+                                <div class="text-indigo-400 font-semibold">高潮</div>
+                                <div class="text-gray-500">85%</div>
+                                <div class="text-gray-400 text-xs mt-1">核心对拼</div>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3 text-center">
+                                <div class="text-indigo-400 font-semibold">决胜</div>
+                                <div class="text-gray-500">95%</div>
+                                <div class="text-gray-400 text-xs mt-1">收割残局</div>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3 text-center">
+                                <div class="text-indigo-400 font-semibold">结束</div>
+                                <div class="text-gray-500">30%</div>
+                                <div class="text-gray-400 text-xs mt-1">胜利确认</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 3.3 Enemy Types -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">3.3 敌人类型配置</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="glass-card rounded-xl p-5 border-l-4 border-red-500">
+                            <h4 class="font-semibold text-red-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-khanda"></i> 输出型
+                            </h4>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li><strong class="text-gray-300">特征：</strong>高攻击，低防御</li>
+                                <li><strong class="text-gray-300">威胁：</strong>对我方脆皮单位威胁大</li>
+                                <li><strong class="text-gray-300">对策：</strong>优先击杀或用坦克护卫</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5 border-l-4 border-blue-500">
+                            <h4 class="font-semibold text-blue-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-shield-alt"></i> 坦克型
+                            </h4>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li><strong class="text-gray-300">特征：</strong>高防御，有护卫技能</li>
+                                <li><strong class="text-gray-300">威胁：</strong>保护敌方输出，拖延时间</li>
+                                <li><strong class="text-gray-300">对策：</strong>绕过或用法术/真实伤害击杀</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5 border-l-4 border-green-500">
+                            <h4 class="font-semibold text-green-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-hand-holding-medical"></i> 辅助型
+                            </h4>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li><strong class="text-gray-300">特征：</strong>治疗、增益、控制</li>
+                                <li><strong class="text-gray-300">威胁：</strong>延长战斗，增加变数</li>
+                                <li><strong class="text-gray-300">对策：</strong>优先击杀，打断节奏</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5 border-l-4 border-purple-500">
+                            <h4 class="font-semibold text-purple-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-running"></i> 突击型
+                            </h4>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li><strong class="text-gray-300">特征：</strong>高机动，绕后能力</li>
+                                <li><strong class="text-gray-300">威胁：</strong>切后排，打乱阵型</li>
+                                <li><strong class="text-gray-300">对策：</strong>保护后排，预留反击单位</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-box rounded-xl p-6">
+                        <h4 class="font-semibold text-emerald-400 mb-2">敌人配置公式</h4>
+                        <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-300">
+                            <div>
+                                <strong>标准遭遇战</strong><br/>
+                                <span class="text-gray-400">2输出 + 1坦克 + 1辅助</span>
+                            </div>
+                            <div>
+                                <strong>大型战斗</strong><br/>
+                                <span class="text-gray-400">4输出 + 2坦克 + 2辅助 + 1突击</span>
+                            </div>
+                            <div>
+                                <strong>BOSS战</strong><br/>
+                                <span class="text-gray-400">1BOSS + 2护卫 + 2杂兵</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Patterns -->
+            <section id="patterns" class="mb-12">
+                <div class="section-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-sm">4</span>
+                        实用设计模式
+                    </h2>
+                    
+                    <!-- 4.1 Choke Points -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">4.1 阻塞点设计模式</h3>
+                    
+                    <div class="space-y-6 mb-8">
+                        <div class="glass-card rounded-xl p-6">
+                            <h4 class="font-semibold text-amber-400 mb-4">模式A：城门守卫战</h4>
+                            <div class="code-block text-sm text-gray-400 mb-4 grid-pattern">          敌人援军 →
+                
+      ████████████████
+   我→█ 敌  敌  门  █
+  方  ████████████████
+                
+  (需要坚守N回合或击杀首领)</div>
+                            <p class="text-gray-400 text-sm">城门是天然阻塞点，敌方援军不断从上方涌入。胜利条件：坚守X回合或击杀敌方首领。</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6">
+                            <h4 class="font-semibold text-amber-400 mb-4">模式B：桥头阻击战</h4>
+                            <div class="code-block text-sm text-gray-400 mb-4 grid-pattern">  ~~~~  敌方大军  ~~~~
+  ~~~~ ████████ ~~~~
+  ~~~~ █ 桥 █ ~~~~
+  ~~~~ ████████ ~~~~
+       我方阵地
+       治疗师  弓箭手
+       战士    骑士</div>
+                            <p class="text-gray-400 text-sm">桥梁是唯一的交战点，利用地形让弓箭手获得站位优势，治疗师在安全位置提供支援。</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6">
+                            <h4 class="font-semibold text-amber-400 mb-4">模式C：分兵合击</h4>
+                            <div class="code-block text-sm text-gray-400 mb-4 grid-pattern">  左路敌军      右路敌军
+      │              │
+   森林│         河流│
+      │              │
+  [我方分兵点]
+      ↓              ↓
+   坦克+治疗     输出+刺客</div>
+                            <p class="text-gray-400 text-sm">需要分兵同时处理两路，左右路地形不同需要不同配置，任何一路失守都可能导致失败。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 4.2 Multi-phase -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">4.2 分阶段战斗设计</h3>
+                    
+                    <div class="grid md:grid-cols-3 gap-4 mb-8">
+                        <div class="glass-card rounded-xl p-5">
+                            <div class="text-indigo-400 font-semibold mb-2">阶段1：突破外围</div>
+                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">  外围敌军
+  ████████████████
+  █  外围防线    █ ←机关门A
+  ████████████████
+                
+      [开关A]</div>
+                            <p class="text-sm text-gray-400">击败外围敌军，占领开关A开启机关门</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <div class="text-indigo-400 font-semibold mb-2">阶段2：攻入内城</div>
+                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">  内城精英
+  ████████████████
+  █  BOSS房间    █ ←机关门B
+  ████████████████
+                
+      [开关B]</div>
+                            <p class="text-sm text-gray-400">击败内城精英，占领开关B开启BOSS房间</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <div class="text-indigo-400 font-semibold mb-2">阶段3：BOSS战</div>
+                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">       [BOSS]
+    精英护卫 精英护卫
+                
+  (胜利条件：击杀BOSS)</div>
+                            <p class="text-sm text-gray-400">每阶段可以休整、补给，给玩家明确的进度感</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 4.3 Multi-route -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">4.3 多路线设计</h3>
+                    
+                    <div class="glass-card rounded-xl p-6 mb-8">
+                        <div class="code-block text-sm text-gray-400 mb-4 grid-pattern">        [目标点]
+             │
+    ┌────────┴────────┐
+    │                 │
+  森林路            河流路
+  (敌人少)          (敌人多)
+  (有宝藏)          (有捷径)
+    │                 │
+    └────────┬────────┘
+             │
+        [起点]</div>
+                        <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-400">
+                            <div><strong class="text-white">路线设计原则：</strong></div>
+                            <div>• 不同路线有不同的风险/收益</div>
+                            <div>• 没有绝对最优解，取决于队伍配置</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 4.4 Protection -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">4.4 保护/护送目标设计</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="glass-card rounded-xl p-5">
+                            <h4 class="font-semibold text-green-400 mb-3">保护型关卡</h4>
+                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">  敌人进攻方向 → → →
+                
+  森林  森林  [保护目标]
+   ↓     ↓    城墙城墙
+  我方防线  我方防线
+                
+  (坚守N回合)</div>
+                            <p class="text-sm text-gray-400">利用森林和城墙创造保护区域，设计多条敌人进攻路线防止单一防守</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h4 class="font-semibold text-blue-400 mb-3">护送型关卡</h4>
+                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">  [终点]
+    ↑
+  森林→森林→开阔地
+    ↑
+  [护送目标] → 起点
+                
+  (护送目标到达终点)</div>
+                            <p class="text-sm text-gray-400">护送目标移动力通常较慢，需要清理路线上的敌人，可设计分支路线供选择</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Cases -->
+            <section id="cases" class="mb-12">
+                <div class="section-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-sm">5</span>
+                        案例分析
+                    </h2>
+                    
+                    <!-- 5.1 Fire Emblem -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">5.1 火焰纹章GBA的优秀地图</h3>
+                    
+                    <div class="space-y-6 mb-8">
+                        <div class="glass-card rounded-xl p-6">
+                            <h4 class="font-semibold text-amber-400 mb-3">案例1：烈火之剑 - 草原战役</h4>
+                            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">森林走廊</strong>
+                                    <p class="text-gray-400 mt-1">地图两侧森林形成天然通道，适合绕后</p>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">中央平原</strong>
+                                    <p class="text-gray-400 mt-1">无遮蔽的交战区，考验先手和集火</p>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">堡垒据点</strong>
+                                    <p class="text-gray-400 mt-1">地图四角的堡垒，提供战略价值</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6">
+                            <h4 class="font-semibold text-amber-400 mb-3">案例2：封印之剑 - 沙漠关卡</h4>
+                            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">移动力惩罚</strong>
+                                    <p class="text-gray-400 mt-1">沙漠消耗+2移动力，大幅降低机动性</p>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">隐藏要素</strong>
+                                    <p class="text-gray-400 mt-1">沙漠中有隐藏物品和伏兵</p>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-3">
+                                    <strong class="text-white">路径规划</strong>
+                                    <p class="text-gray-400 mt-1">存在隐藏的"快速通道"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 5.2 天地劫 -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">5.2 天地劫的无高低差设计</h3>
+                    
+                    <div class="glass-card rounded-xl p-6 mb-8">
+                        <h4 class="font-semibold text-white mb-4">元素地形机制</h4>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+                                <h5 class="font-semibold text-red-400 mb-2">火焰地形</h5>
+                                <ul class="text-sm text-gray-400 space-y-1">
+                                    <li>• 进入/经过时受到伤害</li>
+                                    <li>• 火系法术可创造</li>
+                                    <li>• 用火墙分割战场</li>
+                                </ul>
+                            </div>
+                            <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                                <h5 class="font-semibold text-blue-400 mb-2">霜冻地形</h5>
+                                <ul class="text-sm text-gray-400 space-y-1">
+                                    <li>• 移动力-2</li>
+                                    <li>• 可能触发冰冻</li>
+                                    <li>• 限制敌人机动</li>
+                                </ul>
+                            </div>
+                            <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                                <h5 class="font-semibold text-yellow-400 mb-2">雷电地形</h5>
+                                <ul class="text-sm text-gray-400 space-y-1">
+                                    <li>• 概率触发麻痹</li>
+                                    <li>• 雷系法术创造</li>
+                                    <li>• 控制敌人行动</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 5.3 Langrisser -->
+                    <h3 class="text-xl font-semibold text-indigo-300 mb-4">5.3 梦幻模拟战的地图设计</h3>
+                    
+                    <div class="glass-card rounded-xl p-6">
+                        <h4 class="font-semibold text-white mb-4">兵种与地形的关系</h4>
+                        <div class="grid md:grid-cols-4 gap-4 text-sm">
+                            <div class="bg-white/5 rounded-lg p-3">
+                                <strong class="text-cyan-400">骑兵</strong>
+                                <p class="text-gray-400 mt-1">平原优势，森林/山地消耗大，适合绕后突袭</p>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3">
+                                <strong class="text-purple-400">飞兵</strong>
+                                <p class="text-gray-400 mt-1">地形免疫，可跨越高墙，怕被弓箭克制</p>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3">
+                                <strong class="text-green-400">步兵</strong>
+                                <p class="text-gray-400 mt-1">可进入森林/山地，利用地形防御对抗骑兵</p>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3">
+                                <strong class="text-amber-400">弓兵</strong>
+                                <p class="text-gray-400 mt-1">高地射程+1，控制关键通道</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Checklist -->
+            <section id="checklist" class="mb-12">
+                <div class="section-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-sm">6</span>
+                        设计Checklist
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="glass-card rounded-xl p-5">
+                            <h3 class="font-semibold text-cyan-400 mb-4 flex items-center gap-2">
+                                <i class="fas fa-clipboard-check"></i> 基础检查
+                            </h3>
+                            <div class="space-y-2">
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">地图是否有明确的交战区？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">是否存在合理的阻塞点？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">地形效果是否清晰传达？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">胜利条件是否明确？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">失败条件是否合理？</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h3 class="font-semibold text-purple-400 mb-4 flex items-center gap-2">
+                                <i class="fas fa-chess"></i> 战术深度检查
+                            </h3>
+                            <div class="space-y-2">
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">是否存在多条通关路径？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">不同兵种是否有不同的地形适应？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">是否利用地形效果才能解开的局面？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">机关/互动元素是否增加战术选择？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">敌人配置是否考验阵型安排？</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h3 class="font-semibold text-amber-400 mb-4 flex items-center gap-2">
+                                <i class="fas fa-heartbeat"></i> 节奏感检查
+                            </h3>
+                            <div class="space-y-2">
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">关卡是否有清晰的阶段划分？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">紧张度曲线是否符合标准？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">是否存在让玩家喘息的时机？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">关卡时长是否适中(15-30分钟)？</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-5">
+                            <h3 class="font-semibold text-green-400 mb-4 flex items-center gap-2">
+                                <i class="fas fa-balance-scale"></i> 公平性检查
+                            </h3>
+                            <div class="space-y-2">
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">玩家是否有足够信息做决策？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">失败是否归咎于可学习的错误？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">是否存在"初见杀"的不公平？</span>
+                                </label>
+                                <label class="checklist-item flex items-center gap-3 p-2 rounded cursor-pointer">
+                                    <input type="checkbox" class="w-4 h-4 rounded border-gray-500 bg-transparent">
+                                    <span class="text-gray-300">随机因素是否控制在合理范围？</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Reference -->
+            <section id="reference" class="mb-12">
+                <div class="section-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-sm">7</span>
+                        快速参考表
+                    </h2>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-4">地形效果速查</h3>
+                            <div class="table-container">
+                                <table class="text-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>地形</th>
+                                            <th>回避</th>
+                                            <th>防御</th>
+                                            <th>移动力</th>
+                                            <th>特殊效果</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="text-gray-400">平原</td><td>-</td><td>-</td><td>1</td><td>无</td></tr>
+                                        <tr><td class="text-green-400">森林</td><td class="text-green-400">+20%</td><td class="text-green-400">+1</td><td>2</td><td>-</td></tr>
+                                        <tr><td class="text-green-400">深山</td><td class="text-green-400">+30%</td><td class="text-green-400">+2</td><td>3</td><td>-</td></tr>
+                                        <tr><td class="text-amber-400">堡垒</td><td class="text-green-400">+20%</td><td class="text-green-400">+2</td><td>2</td><td class="text-cyan-400">每回合回血</td></tr>
+                                        <tr><td class="text-gray-400">城墙</td><td>-</td><td class="text-green-400">+3</td><td>-</td><td class="text-red-400">不可穿越</td></tr>
+                                        <tr><td class="text-blue-400">河流</td><td>-</td><td>-</td><td>3</td><td class="text-purple-400">仅飞行可停留</td></tr>
+                                        <tr><td class="text-yellow-400">沙漠</td><td>-</td><td>-</td><td>3</td><td class="text-amber-400">隐藏要素</td></tr>
+                                        <tr><td class="text-red-400">毒沼</td><td>-</td><td>-</td><td>2</td><td class="text-red-400">持续伤害</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-4">敌人配置速查</h3>
+                            <div class="table-container">
+                                <table class="text-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>关卡类型</th>
+                                            <th>输出</th>
+                                            <th>坦克</th>
+                                            <th>辅助</th>
+                                            <th>突击</th>
+                                            <th>特殊</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>教学关</td><td>2</td><td>1</td><td>-</td><td>-</td><td>-</td></tr>
+                                        <tr><td>标准遭遇</td><td>3</td><td>1</td><td>1</td><td>-</td><td>-</td></tr>
+                                        <tr><td>大型战役</td><td>5</td><td>2</td><td>2</td><td>1</td><td>-</td></tr>
+                                        <tr><td>防守战</td><td>4</td><td>3</td><td>2</td><td>-</td><td>1</td></tr>
+                                        <tr><td>BOSS战</td><td>2</td><td>2</td><td>1</td><td>-</td><td>1BOSS</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-4">关卡尺寸参考</h3>
+                            <div class="table-container">
+                                <table class="text-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>类型</th>
+                                            <th>推荐尺寸</th>
+                                            <th>回合数</th>
+                                            <th>时长</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>教学关</td><td>12×12</td><td>5-8</td><td>10min</td></tr>
+                                        <tr><td>标准关</td><td>18×18</td><td>10-15</td><td>20min</td></tr>
+                                        <tr><td>大型关</td><td>24×24</td><td>15-25</td><td>30min</td></tr>
+                                        <tr><td>史诗关</td><td>30×30</td><td>25+</td><td>45min+</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: Conclusion -->
+            <section id="conclusion" class="mb-12">
+                <div class="glass-card rounded-2xl p-8 border border-indigo-500/30">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-sm">8</span>
+                        结语
+                    </h2>
+                    
+                    <p class="text-lg text-gray-300 leading-relaxed mb-6">
+                        无高低差的关卡设计并非妥协，而是一种独特的设计哲学。通过精心设计的地形效果系统、巧妙的障碍物布局、丰富的第三方机制，同样可以创造出深度十足的战略体验。
+                    </p>
+                    
+                    <div class="grid md:grid-cols-4 gap-4 mb-8">
+                        <div class="terrain-card rounded-xl p-4 text-center">
+                            <i class="fas fa-mountain text-2xl text-indigo-400 mb-2"></i>
+                            <h4 class="font-semibold text-white">地形即战略</h4>
+                            <p class="text-sm text-gray-400">让每块地都有价值</p>
+                        </div>
+                        <div class="terrain-card rounded-xl p-4 text-center">
+                            <i class="fas fa-archway text-2xl text-amber-400 mb-2"></i>
+                            <h4 class="font-semibold text-white">阻塞点创造选择</h4>
+                            <p class="text-sm text-gray-400">用空间限制引导战术</p>
+                        </div>
+                        <div class="terrain-card rounded-xl p-4 text-center">
+                            <i class="fas fa-cogs text-2xl text-cyan-400 mb-2"></i>
+                            <h4 class="font-semibold text-white">机制丰富深度</h4>
+                            <p class="text-sm text-gray-400">机关、增援、互动元素</p>
+                        </div>
+                        <div class="terrain-card rounded-xl p-4 text-center">
+                            <i class="fas fa-wave-square text-2xl text-purple-400 mb-2"></i>
+                            <h4 class="font-semibold text-white">节奏决定体验</h4>
+                            <p class="text-sm text-gray-400">有起伏有高潮</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-xl p-6 border border-indigo-500/30">
+                        <blockquote class="text-xl text-center text-gray-200 italic">
+                            "没有高低差，不代表没有高度。"
+                        </blockquote>
+                        <p class="text-center text-gray-400 mt-2">—— 致每一位SRPG关卡设计师</p>
+                    </div>
+                    
+                    <div class="mt-8 pt-6 border-t border-white/10 text-sm text-gray-500 flex justify-between items-center">
+                        <div>
+                            <span>文档版本: v1.0</span>
+                            <span class="mx-2">|</span>
+                            <span>创建时间: 2026-03-13</span>
+                        </div>
+                        <div>
+                            参考作品: 火焰纹章GBA系列、天地劫、梦幻模拟战、三角战略
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass-card border-t border-white/10 mt-12">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+            <div class="text-sm text-gray-500">
+                SRPG知识库 · 关卡设计专题
+            </div>
+            <div class="flex gap-4">
+                <a href="index.html" class="text-sm text-indigo-400 hover:text-indigo-300">返回首页</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Active TOC link
+        const sections = document.querySelectorAll('section[id]');
+        const tocLinks = document.querySelectorAll('.toc-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
