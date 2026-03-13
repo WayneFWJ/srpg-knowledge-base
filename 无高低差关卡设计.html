@@ -14,6 +14,109 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
         }
+
+        /* Level Map Visualization Styles */
+        .level-map-container {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .level-map-title {
+            text-align: center;
+            color: #818cf8;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .level-map {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .level-map-row {
+            display: flex;
+            gap: 2px;
+        }
+
+        .map-cell {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .map-cell:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        /* Cell Types */
+        .cell-plain { background: #334155; border: 1px solid #475569; }
+        .cell-forest { background: linear-gradient(135deg, #166534 0%, #15803d 100%); border: 1px solid #22c55e; }
+        .cell-wall { background: linear-gradient(135deg, #374151 0%, #4b5563 100%); border: 1px solid #6b7280; }
+        .cell-gate { background: linear-gradient(135deg, #92400e 0%, #b45309 100%); border: 1px solid #f59e0b; }
+        .cell-river { background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%); border: 1px solid #60a5fa; }
+        .cell-bridge { background: linear-gradient(135deg, #78350f 0%, #92400e 100%); border: 1px solid #d97706; }
+        .cell-mountain { background: linear-gradient(135deg, #451a03 0%, #78350f 100%); border: 1px solid #a16207; }
+        .cell-fort { background: linear-gradient(135deg, #065f46 0%, #047857 100%); border: 1px solid #10b981; }
+        .cell-player { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border: 2px solid #60a5fa; box-shadow: 0 0 8px rgba(37, 99, 235, 0.5); }
+        .cell-enemy { background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%); border: 2px solid #f87171; box-shadow: 0 0 8px rgba(220, 38, 38, 0.5); }
+        .cell-boss { background: linear-gradient(135deg, #581c87 0%, #9333ea 100%); border: 2px solid #c084fc; box-shadow: 0 0 10px rgba(147, 51, 234, 0.6); }
+        .cell-escort { background: linear-gradient(135deg, #854d0e 0%, #ca8a04 100%); border: 2px solid #facc15; box-shadow: 0 0 10px rgba(234, 179, 8, 0.5); }
+        .cell-trap { background: linear-gradient(135deg, #701a75 0%, #a855f7 100%); border: 1px dashed #c084fc; }
+        .cell-reinforce { background: linear-gradient(135deg, #881337 0%, #e11d48 100%); border: 2px dashed #fb7185; animation: pulse 2s infinite; }
+        .cell-start { background: linear-gradient(135deg, #064e3b 0%, #059669 100%); border: 2px solid #34d399; }
+        .cell-goal { background: linear-gradient(135deg, #92400e 0%, #d97706 100%); border: 2px solid #fbbf24; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .map-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .legend-cell {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .map-annotation {
+            text-align: center;
+            color: #64748b;
+            font-size: 11px;
+            margin-top: 8px;
+            font-style: italic;
+        }
         
         .glass-card {
             background: rgba(255, 255, 255, 0.05);
@@ -810,42 +913,123 @@
                     
                     <!-- 4.1 Choke Points -->
                     <h3 class="text-xl font-semibold text-indigo-300 mb-4">4.1 阻塞点设计模式</h3>
-                    
+
                     <div class="space-y-6 mb-8">
                         <div class="glass-card rounded-xl p-6">
                             <h4 class="font-semibold text-amber-400 mb-4">模式A：城门守卫战</h4>
-                            <div class="code-block text-sm text-gray-400 mb-4 grid-pattern">          敌人援军 →
-                
-      ████████████████
-   我→█ 敌  敌  门  █
-  方  ████████████████
-                
-  (需要坚守N回合或击杀首领)</div>
-                            <p class="text-gray-400 text-sm">城门是天然阻塞点，敌方援军不断从上方涌入。胜利条件：坚守X回合或击杀敌方首领。</p>
+                            
+                            <!-- 城门守卫战关卡图 -->
+                            <div class="level-map-container">
+                                <div class="level-map-title">城防关卡布局</div>
+                                <div class="level-map">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-reinforce">↓</div><div class="map-cell cell-reinforce">↓</div><div class="map-cell cell-reinforce">↓</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-gate">G</div><div class="map-cell cell-gate">G</div><div class="map-cell cell-gate">G</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-fort">F</div><div class="map-cell cell-fort">F</div><div class="map-cell cell-fort">F</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-escort">★</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div>
+                                    </div>
+                                </div>
+                                <div class="map-legend">
+                                    <div class="legend-item"><div class="legend-cell cell-player"></div>我方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-enemy"></div>敌方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-wall"></div>城墙</div>
+                                    <div class="legend-item"><div class="legend-cell cell-gate"></div>城门</div>
+                                    <div class="legend-item"><div class="legend-cell cell-fort"></div>堡垒</div>
+                                    <div class="legend-item"><div class="legend-cell cell-escort"></div>保护目标</div>
+                                    <div class="legend-item"><div class="legend-cell cell-reinforce"></div>增援方向</div>
+                                </div>
+                                <div class="map-annotation">胜利条件：坚守8回合或击杀敌方首领 | 城门可开关控制敌军流量</div>
+                            </div>
+                            
+                            <p class="text-gray-400 text-sm mt-4">城门是天然阻塞点，敌方援军不断从上方涌入。胜利条件：坚守X回合或击杀敌方首领。</p>
                         </div>
                         
                         <div class="glass-card rounded-xl p-6">
                             <h4 class="font-semibold text-amber-400 mb-4">模式B：桥头阻击战</h4>
-                            <div class="code-block text-sm text-gray-400 mb-4 grid-pattern">  ~~~~  敌方大军  ~~~~
-  ~~~~ ████████ ~~~~
-  ~~~~ █ 桥 █ ~~~~
-  ~~~~ ████████ ~~~~
-       我方阵地
-       治疗师  弓箭手
-       战士    骑士</div>
-                            <p class="text-gray-400 text-sm">桥梁是唯一的交战点，利用地形让弓箭手获得站位优势，治疗师在安全位置提供支援。</p>
+                            
+                            <!-- 桥头阻击战关卡图 -->
+                            <div class="level-map-container">
+                                <div class="level-map-title">河流桥梁关卡布局</div>
+                                <div class="level-map">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-boss">B</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div><div class="map-cell cell-bridge">=</div><div class="map-cell cell-bridge">=</div><div class="map-cell cell-bridge">=</div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-plain"></div><div class="map-cell cell-fort">H</div><div class="map-cell cell-fort">H</div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                </div>
+                                <div class="map-legend">
+                                    <div class="legend-item"><div class="legend-cell cell-player"></div>我方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-enemy"></div>敌方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-boss"></div>敌方首领</div>
+                                    <div class="legend-item"><div class="legend-cell cell-river"></div>河流(不可停留)</div>
+                                    <div class="legend-item"><div class="legend-cell cell-bridge"></div>桥梁通道</div>
+                                    <div class="legend-item"><div class="legend-cell cell-fort"></div>治疗点</div>
+                                </div>
+                                <div class="map-annotation">桥梁是唯一交战点，利用地形让远程单位获得站位优势 | 河流仅飞行单位可穿越</div>
+                            </div>
+                            
+                            <p class="text-gray-400 text-sm mt-4">桥梁是唯一的交战点，利用地形让弓箭手获得站位优势，治疗师在安全位置提供支援。</p>
                         </div>
                         
                         <div class="glass-card rounded-xl p-6">
                             <h4 class="font-semibold text-amber-400 mb-4">模式C：分兵合击</h4>
-                            <div class="code-block text-sm text-gray-400 mb-4 grid-pattern">  左路敌军      右路敌军
-      │              │
-   森林│         河流│
-      │              │
-  [我方分兵点]
-      ↓              ↓
-   坦克+治疗     输出+刺客</div>
-                            <p class="text-gray-400 text-sm">需要分兵同时处理两路，左右路地形不同需要不同配置，任何一路失守都可能导致失败。</p>
+                            
+                            <!-- 分兵合击关卡图 -->
+                            <div class="level-map-container">
+                                <div class="level-map-title">多路线分兵关卡布局</div>
+                                <div class="level-map">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-enemy">E</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-enemy">E</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-boss">B</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-river">~</div><div class="map-cell cell-river">~</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-player">P</div><div class="map-cell cell-bridge">=</div><div class="map-cell cell-player">P</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-player">P</div><div class="map-cell cell-fort">H</div><div class="map-cell cell-plain"></div><div class="map-cell cell-goal">★</div><div class="map-cell cell-plain"></div><div class="map-cell cell-player">P</div><div class="map-cell cell-plain"></div><div class="map-cell cell-player">P</div>
+                                    </div>
+                                </div>
+                                <div class="map-legend">
+                                    <div class="legend-item"><div class="legend-cell cell-player"></div>我方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-enemy"></div>敌方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-boss"></div>敌方首领</div>
+                                    <div class="legend-item"><div class="legend-cell cell-forest"></div>森林(+回避)</div>
+                                    <div class="legend-item"><div class="legend-cell cell-river"></div>河流</div>
+                                    <div class="legend-item"><div class="legend-cell cell-bridge"></div>桥梁</div>
+                                    <div class="legend-item"><div class="legend-cell cell-fort"></div>治疗点</div>
+                                    <div class="legend-item"><div class="legend-cell cell-goal"></div>目标点</div>
+                                </div>
+                                <div class="map-annotation">左路森林适合近战，右路河流需要远程/飞行单位 | 任何一路失守都可能导致失败</div>
+                            </div>
+                            
+                            <p class="text-gray-400 text-sm mt-4">需要分兵同时处理两路，左右路地形不同需要不同配置，任何一路失守都可能导致失败。</p>
                         </div>
                     </div>
                     
