@@ -7,6 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Mermaid.js 图表支持 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <!-- 图表系统样式 -->
+    <link rel="stylesheet" href="./diagram-system.css">
     <style>
         :root {
             --bg-primary: #0a0a0f;
@@ -462,6 +466,38 @@
 
             <h2 id="11-三维设计模型">1.1 三维设计模型</h2>
 
+            <!-- 三维设计框架图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">关卡设计三维框架</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+flowchart TB
+    subgraph Framework["三维设计框架"]
+        direction TB
+        M[机制<br/>Mechanics] --> M1[胜利条件]
+        M --> M2[失败条件]
+        M --> M3[特殊规则]
+        
+        E[敌人<br/>Enemies] --> E1[类型配置]
+        E --> E2[位置布局]
+        E --> E3[AI行为]
+        
+        V[环境<br/>Environment] --> V1[地形设计]
+        V --> V2[高低差]
+        V --> V3[互动元素]
+    end
+    
+    Objective[目标<br/>Objectives] --> Framework
+    
+    Framework --> Experience["玩家体验"]
+    
+    style M fill:#ff6b35,color:#fff
+    style E fill:#a855f7,color:#fff
+    style V fill:#06b6d4,color:#fff
+    style Objective fill:#10b981,color:#fff
+                </div>
+            </div>
+
             <pre><code>                    ┌─────────────┐
                     │   机  制    │
                     │  (Mechanics)│
@@ -499,6 +535,28 @@
             <h1 id="二敌人设计维度">二、敌人设计维度</h1>
 
             <h2 id="21-敌人类型定位">2.1 敌人类型定位</h2>
+
+            <!-- 敌人类型图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">敌人类型定位矩阵</div>
+                <div class="mermaid"
+%%{init: {'theme': 'dark'}}%%
+quadrantChart
+    title 敌人类型定位矩阵
+    x-axis 生存能力 --> 爆发能力
+    y-axis 控制辅助 --> 输出核心
+    quadrant-1 输出型
+    quadrant-2 辅助型
+    quadrant-3 防御型
+    quadrant-4 突击型
+    "法师": [0.8, 0.7]
+    "弓手": [0.6, 0.8]
+    "刺客": [0.9, 0.3]
+    "坦克": [0.2, 0.5]
+    "治疗": [0.1, 0.9]
+    "BOSS": [0.7, 0.6]
+                </div>
+            </div>
 
             <table>
                 <thead>
@@ -804,6 +862,42 @@
 
             <h2 id="51-关卡节奏模型">5.1 关卡节奏模型</h2>
 
+            <!-- 情感曲线图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">标准关卡情感曲线</div>
+                <div class="mermaid"
+%%{init: {'theme': 'dark'}}%%
+xychart-beta
+    title "关卡情感曲线 - 紧张度变化"
+    x-axis [开局, 展开, 高潮, 决胜, 结束]
+    y-axis "紧张度" 0 --> 100
+    line [20, 45, 85, 95, 30]
+    
+    annotation "布局占位" at 0.1, 20
+    annotation "试探交火" at 1.1, 45
+    annotation "核心对拼" at 2.1, 85
+    annotation "收割决胜" at 3.1, 95
+    annotation "胜利确认" at 4.1, 30
+                </div>
+            </div>
+
+            <!-- 章节难度曲线图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">章节难度曲线</div>
+                <div class="mermaid"
+%%{init: {'theme': 'dark'}}%%
+xychart-beta
+    title "章节难度递增设计"
+    x-axis [关卡1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    y-axis "难度" 0 --> 100
+    line [30, 35, 45, 55, 65, 75, 70, 80, 90, 100]
+    
+    annotation "教学/热身" at 0.5, 30
+    annotation "难度递增" at 4.5, 65
+    annotation "BOSS战" at 9.5, 100
+                </div>
+            </div>
+
             <pre><code>标准关卡情感曲线：
 
 紧张度
@@ -866,6 +960,37 @@
 └─ BOSS变身：二阶段/三阶段</code></pre>
 
             <h1 id="六关卡类型设计">六、关卡类型设计</h1>
+
+            <!-- 关卡类型分类图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">关卡类型分类</div>
+                <div class="mermaid"
+%%{init: {'theme': 'dark'}}%%
+flowchart TB
+    subgraph Types["关卡类型"]
+        T1[教学关卡] --> T1_1[展示机制]
+        T1 --> T1_2[引导使用]
+        T1 --> T1_3[检验理解]
+        
+        T2[剧情关卡] --> T2_1[叙事驱动]
+        T2 --> T2_2[情感共鸣]
+        T2 --> T2_3[角色限制]
+        
+        T3[挑战关卡] --> T3_1[越级挑战]
+        T3 --> T3_2[限制挑战]
+        T3 --> T3_3[竞速挑战]
+        
+        T4[日常关卡] --> T4_1[资源获取]
+        T4 --> T4_2[扫荡功能]
+        T4 --> T4_3[难度分级]
+    end
+    
+    style T1 fill:#3b82f6,color:#fff
+    style T2 fill:#a855f7,color:#fff
+    style T3 fill:#ef4444,color:#fff
+    style T4 fill:#10b981,color:#fff
+                </div>
+            </div>
 
             <h2 id="61-教学关卡">6.1 教学关卡</h2>
 

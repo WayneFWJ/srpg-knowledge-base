@@ -7,6 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Mermaid.js 图表支持 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <!-- 图表系统样式 -->
+    <link rel="stylesheet" href="./diagram-system.css">
     <style>
         :root {
             --bg-primary: #0a0a0f;
@@ -522,6 +526,34 @@
 
             <h2 id="22-六职业标准模型天地劫体系">2.2 六职业标准模型（天地劫体系）</h2>
 
+            <!-- 职业体系图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">天地劫六职业体系</div>
+                <div class="mermaid"
+%%{init: {'theme': 'dark'}}%%
+flowchart TB
+    subgraph Team["队伍构成"]
+        direction LR
+        T1[侠客 ⚔️] --- T2[铁卫 🛡️] --- T3[咒师 🔮]
+        T4[祝由 💚] --- T5[羽士 🏹] --- T6[御风 ⚡]
+    end
+    
+    subgraph Roles["职业定位"]
+        R1[近战输出] --> T1
+        R2[坦克护卫] --> T2
+        R3[法术输出] --> T3
+        R4[治疗辅助] --> T4
+        R5[远程物理] --> T5
+        R6[刺客机动] --> T6
+    end
+    
+    subgraph Counters["克制关系"]
+        C1[御风] -->|"克制"| C2[侠客]
+        C3[铁卫] -->|"克制"| C1
+    end
+                </div>
+            </div>
+
             <table>
                 <thead>
                     <tr>
@@ -688,6 +720,31 @@
 
             <h2 id="31-技能类型体系">3.1 技能类型体系</h2>
 
+            <!-- 技能类型图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">技能类型与消耗体系</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+flowchart TB
+    subgraph SkillType["技能类型"]
+        ST1[普攻] --> ST2[主动技能]
+        ST2 --> ST3[气力技]
+        ST4[被动] --> ST5[天赋]
+    end
+    
+    subgraph Cost["资源消耗"]
+        C1[无消耗] --> ST1
+        C2[MP消耗] --> ST2
+        C3[CD限制] --> ST2
+        C4[气力积累] --> ST3
+    end
+    
+    subgraph Effects["效果分类"]
+        E1[伤害类] & E2[治疗类] & E3[控制类] & E4[增益类] --> ST2
+    end
+                </div>
+            </div>
+
             <table>
                 <thead>
                     <tr>
@@ -738,6 +795,72 @@
             </table>
 
             <h2 id="32-技能机制库">3.2 技能机制库</h2>
+
+            <!-- 技能机制分类图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">技能机制完整分类</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+mindmap
+  root((技能机制))
+    伤害类
+      直接伤害
+        物理
+        法术
+        真实伤害
+      持续伤害
+        燃烧
+        中毒
+        流血
+      溅射伤害
+        范围伤害
+        连锁伤害
+        弹射伤害
+      斩杀伤害
+        残血增伤
+    治疗类
+      直接治疗
+      持续治疗/Hot
+      吸血
+      复活
+    控制类
+      行动限制
+        眩晕
+        睡眠
+        冰冻
+      技能限制
+        沉默
+        计穷
+      移动限制
+        定身
+        减速
+        嘲讽
+    增益类
+      属性提升
+      状态免疫
+      护盾反击
+      行动增益
+        再动
+        再移动
+    减益类
+      属性降低
+      有害状态
+      标记状态
+      特殊减益
+    位移类
+      自身位移
+      敌人位移
+      群体位移
+    地形类
+      地形创造
+      地形利用
+    特殊机制
+      召唤
+      变身
+      复制
+      链接
+                </div>
+            </div>
 
             <p><strong>核心机制分类</strong>：</p>
             <pre><code>1. 伤害类机制
@@ -932,6 +1055,39 @@ PVP爆发：
 
             <h2 id="41-克制系统设计">4.1 克制系统设计</h2>
 
+            <!-- 克制系统设计图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">三重克制系统对比</div>
+                <div class="mermaid"
+%%{init: {'theme': 'dark'}}%%
+flowchart TB
+    subgraph Attr["属性克制 (天地劫)"]
+        A1[🔥火] -->|1.3x| A2[⚡雷]
+        A2 -->|1.3x| A3[❄️冰]
+        A3 -->|1.3x| A1
+        A4[☀️光] <-->|互克| A5[🌙暗]
+    end
+    
+    subgraph Unit["兵种克制 (梦战)"]
+        U1[步兵] -->|+20%| U2[枪兵]
+        U2 -->|+20%| U3[骑兵]
+        U3 -->|+20%| U1
+    end
+    
+    subgraph Dual["双重克制 (铃兰)"]
+        D1[粉碎者] -->|130%| D2[守护者]
+        D2 -->|130%| D3[突袭者]
+        D3 -->|130%| D1
+        D4[力量] -->|150%| D5[技巧]
+        D5 -->|150%| D6[智慧]
+        D6 -->|150%| D4
+    end
+    
+    Attr -->|策略深度| Dual
+    Unit -->|简化版| Attr
+                </div>
+            </div>
+
             <p><strong>属性克制（天地劫）</strong>：</p>
             <pre><code>克制循环：
 火 → 雷 → 冰 → 火
@@ -1091,6 +1247,19 @@ PVP专属技能效果：
 
             <h2 id="61-机制覆盖率统计">6.1 机制覆盖率统计</h2>
 
+            <!-- 机制覆盖率图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">技能机制覆盖率统计</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+xychart-beta
+    title "机制覆盖率 (天地劫600+技能统计)"
+    x-axis [再动, 护卫, 驱散, 控制, 吸血, 再移动, 地形, 召唤]
+    y-axis "覆盖率(%)" 0 --> 70
+    bar [65, 58, 42, 38, 35, 28, 15, 12]
+                </div>
+            </div>
+
             <p>基于《天地劫》全量技能穷举（600+技能）：</p>
 
             <table>
@@ -1224,6 +1393,24 @@ PVP专属技能效果：
     <a href="#" class="back-to-top" id="backToTop">↑</a>
 
     <script>
+        // Mermaid 初始化
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#ff6b35',
+                primaryTextColor: '#f8fafc',
+                primaryBorderColor: '#ff4757',
+                lineColor: '#94a3b8',
+                secondaryColor: '#1a1a25',
+                tertiaryColor: '#252535'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+
         // 代码高亮
         hljs.highlightAll();
 

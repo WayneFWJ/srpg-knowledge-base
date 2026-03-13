@@ -1,0 +1,365 @@
+/**
+ * SRPG Knowledge Base - Diagram System
+ * 图形解决方案共享样式
+ */
+
+/* ==================== Mermaid 图表容器 ==================== */
+.mermaid-container {
+    background: var(--bg-card, #1a1a25);
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 16px;
+    padding: 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+}
+
+.mermaid-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary, #f8fafc);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mermaid-title::before {
+    content: '📊';
+}
+
+/* Mermaid 主题自定义 */
+.mermaid {
+    display: flex;
+    justify-content: center;
+    min-height: 200px;
+}
+
+/* 确保 Mermaid SVG 在暗黑模式下可见 */
+.mermaid svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==================== CSS 流程图 ==================== */
+.css-flowchart {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    background: var(--bg-secondary, #12121a);
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.flow-node {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--accent-blue, #3b82f6), var(--accent-cyan, #06b6d4));
+    border-radius: 10px;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+    min-width: 120px;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.flow-node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.flow-node.start {
+    background: linear-gradient(135deg, var(--accent-green, #10b981), var(--accent-cyan, #06b6d4));
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.flow-node.end {
+    background: linear-gradient(135deg, var(--accent-red, #ff4757), var(--accent-orange, #ff6b35));
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+}
+
+.flow-node.decision {
+    background: linear-gradient(135deg, var(--accent-purple, #a855f7), var(--accent-pink, #ff6b9d));
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+    border-radius: 30px;
+}
+
+.flow-arrow {
+    color: var(--text-muted, #64748b);
+    font-size: 1.5rem;
+}
+
+.flow-arrow.down::before {
+    content: '↓';
+}
+
+.flow-arrow.right::before {
+    content: '→';
+}
+
+.flow-arrow.left::before {
+    content: '←';
+}
+
+/* ==================== 职业图标系统 ==================== */
+.class-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.class-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px;
+    background: var(--bg-secondary, #12121a);
+    border-radius: 16px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.class-icon:hover {
+    border-color: var(--accent-orange, #ff6b35);
+    transform: translateY(-4px);
+}
+
+.class-icon-svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 12px;
+}
+
+.class-icon-name {
+    font-weight: 600;
+    color: var(--text-primary, #f8fafc);
+    font-size: 0.95rem;
+}
+
+.class-icon-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted, #64748b);
+    margin-top: 4px;
+}
+
+/* 职业颜色主题 */
+.class-warrior { --class-color: #ef4444; }
+.class-tank { --class-color: #22c55e; }
+.class-mage { --class-color: #a855f7; }
+.class-archer { --class-color: #f59e0b; }
+.class-healer { --class-color: #06b6d4; }
+.class-assassin { --class-color: #ec4899; }
+
+/* ==================== 克制关系图 ==================== */
+.counter-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: var(--bg-secondary, #12121a);
+    border-radius: 16px;
+    margin: 20px 0;
+}
+
+.counter-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.counter-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--bg-card, #1a1a25);
+    border-radius: 12px;
+    border: 2px solid var(--border, rgba(255, 255, 255, 0.08));
+    transition: all 0.3s ease;
+    min-width: 100px;
+}
+
+.counter-item:hover {
+    border-color: var(--accent-orange, #ff6b35);
+}
+
+.counter-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+
+.counter-arrow {
+    font-size: 1.5rem;
+    color: var(--accent-orange, #ff6b35);
+}
+
+/* ==================== 属性雷达图容器 ==================== */
+.radar-chart-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin: 24px 0;
+}
+
+.radar-chart {
+    background: var(--bg-card, #1a1a25);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+}
+
+.radar-chart-title {
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary, #f8fafc);
+}
+
+.radar-svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==================== 曲线图 ==================== */
+.curve-chart {
+    background: var(--bg-card, #1a1a25);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px 0;
+}
+
+.curve-chart-title {
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.curve-svg {
+    width: 100%;
+    height: 200px;
+}
+
+/* ==================== 对比矩阵 ==================== */
+.comparison-matrix {
+    display: grid;
+    grid-template-columns: auto repeat(var(--cols, 3), 1fr);
+    gap: 1px;
+    background: var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.matrix-header {
+    background: var(--bg-hover, #252535);
+    padding: 14px 16px;
+    font-weight: 600;
+    color: var(--text-primary, #f8fafc);
+    text-align: center;
+}
+
+.matrix-cell {
+    background: var(--bg-card, #1a1a25);
+    padding: 14px 16px;
+    text-align: center;
+    color: var(--text-secondary, #94a3b8);
+    transition: background 0.2s ease;
+}
+
+.matrix-cell:hover {
+    background: var(--bg-hover, #252535);
+}
+
+.matrix-cell.label {
+    background: var(--bg-secondary, #12121a);
+    font-weight: 500;
+    color: var(--text-primary, #f8fafc);
+    text-align: left;
+}
+
+.matrix-cell.positive {
+    color: var(--accent-green, #10b981);
+    font-weight: 600;
+}
+
+.matrix-cell.negative {
+    color: var(--accent-red, #ff4757);
+    font-weight: 600;
+}
+
+/* ==================== 进度条可视化 ==================== */
+.stat-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.stat-bar-label {
+    min-width: 80px;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #94a3b8);
+}
+
+.stat-bar-track {
+    flex: 1;
+    height: 12px;
+    background: var(--bg-secondary, #12121a);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.stat-bar-value {
+    min-width: 40px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-primary, #f8fafc);
+}
+
+/* ==================== 响应式调整 ==================== */
+@media (max-width: 768px) {
+    .mermaid-container {
+        padding: 16px;
+    }
+    
+    .class-icon-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .flow-row {
+        flex-direction: column;
+    }
+    
+    .counter-row {
+        flex-direction: column;
+    }
+    
+    .counter-arrow {
+        transform: rotate(90deg);
+    }
+}

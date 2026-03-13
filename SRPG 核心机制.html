@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <!-- Mermaid.js 图表支持 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <!-- 图表系统样式 -->
+    <link rel="stylesheet" href="./diagram-system.css">
     <style>
         :root {
             --bg-primary: #0a0a0f;
@@ -475,6 +479,21 @@
 
             <h2 id="12-srpg-vs-其他游戏类型">1.2 SRPG vs 其他游戏类型</h2>
 
+            <!-- 游戏类型对比图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">游戏类型特性对比</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#ff6b35', 'primaryTextColor': '#fff', 'primaryBorderColor': '#ff4757', 'lineColor': '#94a3b8', 'secondaryColor': '#1a1a25', 'tertiaryColor': '#252535'}}}%%
+radarChart
+    title SRPG与其他类型特性对比 (1-5分)
+    axis 策略深度 "角色养成" "战斗规模" "操作要求" "剧情叙事"
+    area "SRPG" 5, 4, 3, 2, 4
+    area "传统RPG" 2, 5, 2, 3, 5
+    area "SLG" 5, 2, 5, 2, 3
+    area "卡牌游戏" 3, 3, 2, 2, 3
+                </div>
+            </div>
+
             <table>
                 <thead>
                     <tr>
@@ -520,6 +539,33 @@
             <h1 id="二网格系统grid-system">二、网格系统（Grid System）</h1>
 
             <h2 id="21-网格类型">2.1 网格类型</h2>
+
+            <!-- 网格系统对比图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">网格系统对比</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+graph LR
+    subgraph Square["正方形网格"]
+        S1[🟦] --> S2[🟦]
+        S2 --> S3[🟦]
+        S1 --> S4[🟦]
+        S4 --> S5[♟️]
+        S5 --> S6[🟦]
+    end
+    
+    subgraph Hex["六边形网格"]
+        H1[⬡] --> H2[⬡]
+        H2 --> H3[⬡]
+        H1 --> H4[⬡]
+        H4 --> H5[♟️]
+        H5 --> H6[⬡]
+    end
+    
+    Square -->|"主流选择<br/>直观易懂"| Pros1["✓ 与像素美术契合<br/>✓ 4/8方向移动<br/>✓ 开发成本低"]
+    Hex -->|"精准距离"| Pros2["✓ 距离计算均匀<br/>✓ 6方向对称<br/>✓ 大地图适用"]
+                </div>
+            </div>
 
             <pre><code>正方形网格 (Square Grid):
 ┌───┬───┬───┐
@@ -612,6 +658,43 @@
 
             <h2 id="31-回合结构">3.1 回合结构</h2>
 
+            <!-- 回合流程图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">标准回合流程</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+flowchart TD
+    Start([回合开始]) --> Init[初始化战场状态]
+    Init --> Phase1{玩家阶段}
+    
+    subgraph PlayerPhase["玩家阶段"]
+        P1[选择单位] --> P2[移动]
+        P2 --> P3{选择行动}
+        P3 -->|攻击| P4[执行攻击]
+        P3 -->|技能| P5[释放技能]
+        P3 -->|物品| P6[使用物品]
+        P3 -->|待机| P7[结束回合]
+        P4 --> P8{还有单位?}
+        P5 --> P8
+        P6 --> P8
+        P7 --> P8
+        P8 -->|是| P1
+        P8 -->|否| Phase1End[阶段结束]
+    end
+    
+    Phase1 -->|所有单位行动完毕| Phase2[敌方阶段]
+    
+    subgraph EnemyPhase["敌方阶段"]
+        E1[AI执行所有敌方单位] --> E2[阶段结束]
+    end
+    
+    Phase2 --> Check{检查胜负条件}
+    Check -->|胜利/失败| End([战斗结束])
+    Check -->|继续| Next[回合结束]
+    Next --> Start
+                </div>
+            </div>
+
             <pre><code>标准回合流程：
 
 回合开始
@@ -682,6 +765,40 @@
 
             <h2 id="41-基础伤害公式">4.1 基础伤害公式</h2>
 
+            <!-- 伤害计算流程图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">伤害计算流程</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+flowchart TD
+    A[开始计算] --> B[获取基础攻击力]
+    B --> C[获取基础防御力]
+    C --> D[计算攻防差值]
+    D --> D1[基础伤害 = 攻 - 防]
+    D1 --> E{应用技能倍率}
+    E --> E1[技能伤害 = 基础 × 倍率]
+    E1 --> F{检查克制关系}
+    F -->|存在克制| G[应用克制系数 1.3x]
+    F -->|无克制| H[系数 1.0x]
+    G --> I[计算地形加成]
+    H --> I
+    I --> J{高地判断}
+    J -->|高打低| K[+15%伤害]
+    J -->|平级| L[无修正]
+    J -->|低打高| M[-10%伤害]
+    K --> N[最终伤害计算]
+    L --> N
+    M --> N
+    N --> O{暴击判断}
+    O -->|暴击| P[×1.5倍暴击伤害]
+    O -->|未暴击| Q[保持原值]
+    P --> R[伤害随机浮动 ±10%]
+    Q --> R
+    R --> S[应用最终伤害]
+    S --> T([结束])
+                </div>
+            </div>
+
             <pre><code>标准伤害公式：
 伤害 = (攻击力 - 防御力) × 技能倍率 × 克制系数
 
@@ -703,6 +820,36 @@
 暴击伤害 = 普通伤害 × 1.5（或更高）</code></pre>
 
             <h2 id="43-克制关系">4.3 克制关系</h2>
+
+            <!-- 克制关系图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">克制关系循环</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+flowchart LR
+    subgraph TypeA["兵种克制 (梦幻模拟战)"]
+        A1[步兵 ⚔️] -->|"克制+20%"| A2[枪兵 🛡️]
+        A2 -->|"克制+20%"| A3[骑兵 🐴]
+        A3 -->|"克制+20%"| A1
+        A4[弓兵 🏹] -.->|"克制飞兵"| A5[飞兵 🦅]
+        A6[僧侣 ✨] -.->|"克制魔物"| A7[魔物 👹]
+    end
+    
+    subgraph TypeB["属性克制 (天地劫)"]
+        B1[🔥 火] -->|"1.3x"| B2[⚡ 雷]
+        B2 -->|"1.3x"| B3[❄️ 冰]
+        B3 -->|"1.3x"| B1
+        B4[☀️ 光] <-->|"互克"| B5[🌙 暗]
+    end
+    
+    subgraph TypeC["双重克制 (铃兰之剑)"]
+        C1[粉碎者 💥] -->|"130%"| C2[守护者 🛡️]
+        C2 -->|"130%"| C3[突袭者 ⚡]
+        C3 -->|"130%"| C1
+        C4[毁灭者 🔮] <-->|"互克"| C5[守望者 💫]
+    end
+                </div>
+            </div>
 
             <h3>兵种克制（梦幻模拟战）</h3>
 
@@ -738,6 +885,37 @@
             <h1 id="五技能机制分类">五、技能机制分类</h1>
 
             <h2 id="51-技能类型体系">5.1 技能类型体系</h2>
+
+            <!-- 技能类型分类图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">技能类型分类</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+mindmap
+  root((技能体系))
+    主动技能
+      普攻技能
+        不消耗资源
+        基础伤害
+      主动技能
+        消耗MP
+        消耗CD
+      气力技
+        需积累气力
+        终极技能
+    被动技能
+      天赋
+        角色固有
+        独特机制
+      被动
+        条件触发
+        常驻效果
+    战术技能
+      独立于角色
+      战场技能
+      战术点消耗
+                </div>
+            </div>
 
             <table>
                 <thead>
@@ -782,6 +960,41 @@
             </table>
 
             <h2 id="52-核心机制库">5.2 核心机制库</h2>
+
+            <!-- 核心机制思维导图 -->
+            <div class="mermaid-container">
+                <div class="mermaid-title">核心机制分类</div>
+                <div class="mermaid">
+%%{init: {'theme': 'dark'}}%%
+mindmap
+  root((核心机制))
+    行动机制
+      再动机制
+        击杀再动
+        暴击再动
+        天赋再动
+      再移动
+        攻击后移动
+        打带跑战术
+      护卫援护
+        替友军承伤
+        坦克核心
+    伤害机制
+      直接伤害
+      持续伤害
+      溅射伤害
+      斩杀伤害
+    控制机制
+      眩晕震慑
+      睡眠
+      沉默计穷
+      缴械定身
+    地形机制
+      地形创造
+      地形利用
+      击退地形杀
+                </div>
+            </div>
 
             <h3>再动机制</h3>
 
@@ -1144,6 +1357,29 @@
     <a href="#" class="back-to-top" id="backToTop">↑</a>
 
     <script>
+        // Mermaid 初始化
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#ff6b35',
+                primaryTextColor: '#f8fafc',
+                primaryBorderColor: '#ff4757',
+                lineColor: '#94a3b8',
+                secondaryColor: '#1a1a25',
+                tertiaryColor: '#252535',
+                fontFamily: 'Inter, sans-serif'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            mindmap: {
+                useMaxWidth: true
+            }
+        });
+
         // 代码高亮
         hljs.highlightAll();
 
