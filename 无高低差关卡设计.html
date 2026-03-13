@@ -1039,33 +1039,74 @@
                     <div class="grid md:grid-cols-3 gap-4 mb-8">
                         <div class="glass-card rounded-xl p-5">
                             <div class="text-indigo-400 font-semibold mb-2">阶段1：突破外围</div>
-                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">  外围敌军
-  ████████████████
-  █  外围防线    █ ←机关门A
-  ████████████████
-                
-      [开关A]</div>
-                            <p class="text-sm text-gray-400">击败外围敌军，占领开关A开启机关门</p>
+                            
+                            <!-- 阶段1关卡图 -->
+                            <div class="level-map-container" style="padding: 8px;">
+                                <div class="level-map" style="transform: scale(0.9);">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-gate">G</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-sm text-gray-400">击败外围敌军，占领开关开启机关门</p>
                         </div>
                         
                         <div class="glass-card rounded-xl p-5">
                             <div class="text-indigo-400 font-semibold mb-2">阶段2：攻入内城</div>
-                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">  内城精英
-  ████████████████
-  █  BOSS房间    █ ←机关门B
-  ████████████████
-                
-      [开关B]</div>
-                            <p class="text-sm text-gray-400">击败内城精英，占领开关B开启BOSS房间</p>
+                            
+                            <!-- 阶段2关卡图 -->
+                            <div class="level-map-container" style="padding: 8px;">
+                                <div class="level-map" style="transform: scale(0.9);">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-gate">G</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-sm text-gray-400">击败内城精英，开启BOSS房间</p>
                         </div>
                         
                         <div class="glass-card rounded-xl p-5">
                             <div class="text-indigo-400 font-semibold mb-2">阶段3：BOSS战</div>
-                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">       [BOSS]
-    精英护卫 精英护卫
-                
-  (胜利条件：击杀BOSS)</div>
-                            <p class="text-sm text-gray-400">每阶段可以休整、补给，给玩家明确的进度感</p>
+                            
+                            <!-- 阶段3关卡图 -->
+                            <div class="level-map-container" style="padding: 8px;">
+                                <div class="level-map" style="transform: scale(0.9);">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-boss">B</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-fort">H</div><div class="map-cell cell-plain"></div><div class="map-cell cell-fort">H</div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-sm text-gray-400">击杀BOSS获得胜利，治疗点提供支援</p>
                         </div>
                     </div>
                     
@@ -1073,18 +1114,47 @@
                     <h3 class="text-xl font-semibold text-indigo-300 mb-4">4.3 多路线设计</h3>
                     
                     <div class="glass-card rounded-xl p-6 mb-8">
-                        <div class="code-block text-sm text-gray-400 mb-4 grid-pattern">        [目标点]
-             │
-    ┌────────┴────────┐
-    │                 │
-  森林路            河流路
-  (敌人少)          (敌人多)
-  (有宝藏)          (有捷径)
-    │                 │
-    └────────┬────────┘
-             │
-        [起点]</div>
-                        <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-400">
+                        
+                        <!-- 多路线关卡图 -->
+                        <div class="level-map-container">
+                            <div class="level-map-title">多路线选择关卡布局</div>
+                            <div class="level-map">
+                                <div class="level-map-row">
+                                    <div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-goal">★</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div>
+                                </div>
+                                <div class="level-map-row">
+                                    <div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div>
+                                </div>
+                                <div class="level-map-row">
+                                    <div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-river">~</div>
+                                </div>
+                                <div class="level-map-row">
+                                    <div class="map-cell cell-enemy">E</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-boss">B</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-bridge">=</div><div class="map-cell cell-river">~</div>
+                                </div>
+                                <div class="level-map-row">
+                                    <div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-river">~</div>
+                                </div>
+                                <div class="level-map-row">
+                                    <div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div>
+                                </div>
+                                <div class="level-map-row">
+                                    <div class="map-cell cell-plain"></div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-plain"></div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div>
+                                </div>
+                            </div>
+                            <div class="map-legend">
+                                <div class="legend-item"><div class="legend-cell cell-player"></div>我方单位</div>
+                                <div class="legend-item"><div class="legend-cell cell-enemy"></div>敌方单位</div>
+                                <div class="legend-item"><div class="legend-cell cell-boss"></div>首领</div>
+                                <div class="legend-item"><div class="legend-cell cell-forest"></div>森林(敌人少/有宝藏)</div>
+                                <div class="legend-item"><div class="legend-cell cell-mountain"></div>山地(仅步行)</div>
+                                <div class="legend-item"><div class="legend-cell cell-river"></div>河流</div>
+                                <div class="legend-item"><div class="legend-cell cell-bridge"></div>桥梁(敌人多/捷径)</div>
+                                <div class="legend-item"><div class="legend-cell cell-goal"></div>目标</div>
+                            </div>
+                            <div class="map-annotation">森林路：敌人少，有隐藏宝藏 | 桥梁路：敌人多，但可直达 | 山地：仅步行单位可通过</div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-400 mt-4">
                             <div><strong class="text-white">路线设计原则：</strong></div>
                             <div>• 不同路线有不同的风险/收益</div>
                             <div>• 没有绝对最优解，取决于队伍配置</div>
@@ -1097,26 +1167,76 @@
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="glass-card rounded-xl p-5">
                             <h4 class="font-semibold text-green-400 mb-3">保护型关卡</h4>
-                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">  敌人进攻方向 → → →
-                
-  森林  森林  [保护目标]
-   ↓     ↓    城墙城墙
-  我方防线  我方防线
-                
-  (坚守N回合)</div>
-                            <p class="text-sm text-gray-400">利用森林和城墙创造保护区域，设计多条敌人进攻路线防止单一防守</p>
+                            
+                            <!-- 保护型关卡图 -->
+                            <div class="level-map-container">
+                                <div class="level-map-title">守护目标关卡布局</div>
+                                <div class="level-map">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-reinforce">↓</div><div class="map-cell cell-reinforce">↓</div><div class="map-cell cell-reinforce">↓</div><div class="map-cell cell-reinforce">↓</div><div class="map-cell cell-reinforce">↓</div><div class="map-cell cell-reinforce">↓</div><div class="map-cell cell-reinforce">↓</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-wall">█</div><div class="map-cell cell-escort">★</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest">🌲</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-wall">█</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-fort">H</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-fort">H</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-fort">H</div>
+                                    </div>
+                                </div>
+                                <div class="map-legend">
+                                    <div class="legend-item"><div class="legend-cell cell-player"></div>我方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-enemy"></div>敌方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-wall"></div>城墙</div>
+                                    <div class="legend-item"><div class="legend-cell cell-forest"></div>森林</div>
+                                    <div class="legend-item"><div class="legend-cell cell-escort"></div>保护目标</div>
+                                    <div class="legend-item"><div class="legend-cell cell-reinforce"></div>增援</div>
+                                </div>
+                                <div class="map-annotation">利用森林和城墙创造保护区域 | 设计多条敌人进攻路线防止单一防守</div>
+                            </div>
+                            
+                            <p class="text-sm text-gray-400 mt-3">利用森林和城墙创造保护区域，设计多条敌人进攻路线防止单一防守</p>
                         </div>
                         
                         <div class="glass-card rounded-xl p-5">
                             <h4 class="font-semibold text-blue-400 mb-3">护送型关卡</h4>
-                            <div class="code-block text-xs text-gray-400 mb-3 grid-pattern">  [终点]
-    ↑
-  森林→森林→开阔地
-    ↑
-  [护送目标] → 起点
-                
-  (护送目标到达终点)</div>
-                            <p class="text-sm text-gray-400">护送目标移动力通常较慢，需要清理路线上的敌人，可设计分支路线供选择</p>
+                            
+                            <!-- 护送型关卡图 -->
+                            <div class="level-map-container">
+                                <div class="level-map-title">护送目标关卡布局</div>
+                                <div class="level-map">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-goal">★</div><div class="map-cell cell-plain"></div><div class="map-cell cell-trap"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-trap"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-forest">🌲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div><div class="map-cell cell-escort">♦</div><div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-forest">🌲</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-trap"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest">🌲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-trap"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-start">S</div>
+                                    </div>
+                                </div>
+                                <div class="map-legend">
+                                    <div class="legend-item"><div class="legend-cell cell-escort"></div>护送目标</div>
+                                    <div class="legend-item"><div class="legend-cell cell-enemy"></div>埋伏敌人</div>
+                                    <div class="legend-item"><div class="legend-cell cell-forest"></div>森林障碍</div>
+                                    <div class="legend-item"><div class="legend-cell cell-trap"></div>陷阱点</div>
+                                    <div class="legend-item"><div class="legend-cell cell-start"></div>起点</div>
+                                    <div class="legend-item"><div class="legend-cell cell-goal"></div>终点</div>
+                                </div>
+                                <div class="map-annotation">护送目标移动力较慢 | 可设计分支路线供选择 | 森林中隐藏伏兵</div>
+                            </div>
+                            
+                            <p class="text-sm text-gray-400 mt-3">护送目标移动力通常较慢，需要清理路线上的敌人，可设计分支路线供选择</p>
                         </div>
                     </div>
                 </div>
@@ -1136,7 +1256,42 @@
                     <div class="space-y-6 mb-8">
                         <div class="glass-card rounded-xl p-6">
                             <h4 class="font-semibold text-amber-400 mb-3">案例1：烈火之剑 - 草原战役</h4>
-                            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                            
+                            <!-- 草原战役关卡图 -->
+                            <div class="level-map-container">
+                                <div class="level-map-title">森林走廊战术布局</div>
+                                <div class="level-map">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-forest"></div><div class="map-cell cell-forest"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest"></div><div class="map-cell cell-forest"></div><div class="map-cell cell-fort">F</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-forest"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-boss">B</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-forest"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-forest"></div><div class="map-cell cell-forest"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div><div class="map-cell cell-forest"></div><div class="map-cell cell-forest"></div><div class="map-cell cell-fort">F</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-plain"></div><div class="map-cell cell-plain"></div>
+                                    </div>
+                                </div>
+                                <div class="map-legend">
+                                    <div class="legend-item"><div class="legend-cell cell-player"></div>我方起始</div>
+                                    <div class="legend-item"><div class="legend-cell cell-enemy"></div>敌方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-boss"></div>首领</div>
+                                    <div class="legend-item"><div class="legend-cell cell-forest"></div>森林走廊(绕后通道)</div>
+                                    <div class="legend-item"><div class="legend-cell cell-fort"></div>堡垒据点(战略价值)</div>
+                                    <div class="legend-item"><div class="legend-cell cell-plain"></div>中央平原(交战区)</div>
+                                </div>
+                                <div class="map-annotation">两侧森林形成天然走廊适合绕后 | 中央平原考验先手和集火 | 四角堡垒提供防御加成</div>
+                            </div>
+                            
+                            <div class="grid md:grid-cols-3 gap-4 text-sm mt-4">
                                 <div class="bg-white/5 rounded-lg p-3">
                                     <strong class="text-white">森林走廊</strong>
                                     <p class="text-gray-400 mt-1">地图两侧森林形成天然通道，适合绕后</p>
@@ -1154,7 +1309,42 @@
                         
                         <div class="glass-card rounded-xl p-6">
                             <h4 class="font-semibold text-amber-400 mb-3">案例2：封印之剑 - 沙漠关卡</h4>
-                            <div class="grid md:grid-cols-3 gap-4 text-sm">
+                            
+                            <!-- 沙漠关卡图 -->
+                            <div class="level-map-container">
+                                <div class="level-map-title">沙漠地形战术布局</div>
+                                <div class="level-map">
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-mountain">▲</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-mountain">▲</div><div class="map-cell cell-mountain">▲</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-mountain">▲</div><div class="map-cell cell-escort">?</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-escort">?</div><div class="map-cell cell-mountain">▲</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-mountain">▲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-mountain">▲</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-mountain">▲</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-boss">B</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-mountain">▲</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-mountain">▲</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-plain">沙</div><div class="map-cell cell-enemy">E</div><div class="map-cell cell-mountain">▲</div>
+                                    </div>
+                                    <div class="level-map-row">
+                                        <div class="map-cell cell-mountain">▲</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-player">P</div><div class="map-cell cell-mountain">▲</div>
+                                    </div>
+                                </div>
+                                <div class="map-legend">
+                                    <div class="legend-item"><div class="legend-cell cell-player"></div>我方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-enemy"></div>敌方单位</div>
+                                    <div class="legend-item"><div class="legend-cell cell-boss"></div>敌方首领</div>
+                                    <div class="legend-item"><div class="legend-cell cell-plain"></div>沙漠(+2移动力)</div>
+                                    <div class="legend-item"><div class="legend-cell cell-mountain"></div>山地(步行专属)</div>
+                                    <div class="legend-item"><div class="legend-cell cell-escort"></div>隐藏要素</div>
+                                </div>
+                                <div class="map-annotation">沙漠消耗+2移动力，大幅降低机动性 | 山地仅步行单位可进入形成天然屏障 | 隐藏要素等待探索</div>
+                            </div>
+                            
+                            <div class="grid md:grid-cols-3 gap-4 text-sm mt-4">
                                 <div class="bg-white/5 rounded-lg p-3">
                                     <strong class="text-white">移动力惩罚</strong>
                                     <p class="text-gray-400 mt-1">沙漠消耗+2移动力，大幅降低机动性</p>
