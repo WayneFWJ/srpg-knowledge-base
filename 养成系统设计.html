@@ -7,6 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Mermaid.js 图表支持 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <!-- 图表系统样式 -->
+    <link rel="stylesheet" href="./diagram-system.css">
     <style>
         :root {
             --bg-primary: #0a0a0f;
@@ -1087,6 +1091,20 @@
     <a href="#" class="back-to-top" id="backToTop">↑</a>
 
     <script>
+        // Mermaid 初始化
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#ff6b35',
+                primaryTextColor: '#f8fafc',
+                primaryBorderColor: '#ff4757',
+                lineColor: '#94a3b8',
+                secondaryColor: '#1a1a25',
+                tertiaryColor: '#252535'
+            }
+        });
+
         // 代码高亮
         hljs.highlightAll();
 
