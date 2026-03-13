@@ -87,6 +87,10 @@
 
 ---
 
+## 🚀 GitHub 推送
+
+如需推送到 GitHub，请参考 [GITHUB_PUSH_GUIDE.md](./GITHUB_PUSH_GUIDE.md)
+
 ## 🔗 参考资料
 
 - [浅谈SRPG战棋游戏的历史发展和关卡设计](https://www.douban.com/note/834376093/)
